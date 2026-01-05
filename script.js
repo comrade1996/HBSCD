@@ -1,0 +1,219 @@
+document.addEventListener('DOMContentLoaded', () => {
+    // Hijri conversion helpers (algorithmic approximation)
+    function gregorianToJulianDay(year, month, day) {
+        return Math.floor((1461 * (year + 4800 + Math.floor((month - 14) / 12))) / 4)
+            + Math.floor((367 * (month - 2 - 12 * Math.floor((month - 14) / 12))) / 12)
+            - Math.floor((3 * Math.floor((year + 4900 + Math.floor((month - 14) / 12)) / 100)) / 4)
+            + day - 32075;
+    }
+
+    function julianDayToHijri(jd) {
+        jd = Math.floor(jd);
+        var l = jd - 1948440 + 10632;
+        var n = Math.floor((l - 1) / 10631);
+        l = l - 10631 * n + 354;
+        var j = (Math.floor((10985 - l) / 5316)) * (Math.floor((50 * l) / 17719)) + (Math.floor(l / 5670)) * (Math.floor((43 * l) / 15238));
+        l = l - (Math.floor((30 - j) / 15)) * (Math.floor((17719 * j) / 50)) - (Math.floor(j / 16)) * (Math.floor((15238 * j) / 43)) + 29;
+        var month = Math.floor((24 * l) / 709);
+        var day = l - Math.floor((709 * month) / 24);
+        var year = 30 * n + j - 30;
+        return { year: year, month: month, day: day };
+    }
+
+    function formatHijri(date) {
+        var jd = gregorianToJulianDay(date.getFullYear(), date.getMonth() + 1, date.getDate());
+        var h = julianDayToHijri(jd);
+        const months = ['Muharram','Safar','Rabi al-awwal','Rabi al-thani','Jumada al-awwal','Jumada al-thani','Rajab','Sha\'ban','Ramadan','Shawwal','Dhu al-Qadah','Dhu al-Hijjah'];
+        return `${h.day} ${months[h.month - 1]} ${h.year} AH`;
+    }
+
+    // Current time and date updater
+    function updateTime() {
+        const now = new Date();
+        const timeOptions = { hour: '2-digit', minute: '2-digit', hour12: false };
+        const dateOptions = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+
+        document.getElementById('currentTime').textContent = now.toLocaleTimeString('en-GB', timeOptions);
+        document.getElementById('currentDate').textContent = now.toLocaleDateString('en-US', dateOptions);
+        // Use algorithmic Hijri conversion (note: local sighting/official calendars may differ slightly)
+        document.getElementById('hijriDate').textContent = formatHijri(now);
+    }
+    
+    // Update time immediately and then every minute
+    updateTime();
+    setInterval(updateTime, 60000);
+    
+    // Meeting data for carousel
+    const meetings = [
+        { time: '09:00 - 10:30', title: 'Emergency Response Training | تدريب الاستجابة للطوارئ', attendees: 18 },
+        { time: '11:00 - 12:00', title: 'Fire Safety Workshop | ورشة عمل السلامة من الحرائق', attendees: 24 },
+        { time: '13:00 - 14:30', title: 'Disaster Management Planning | تخطيط إدارة الكوارث', attendees: 15 },
+        { time: '15:00 - 16:00', title: 'Equipment Maintenance | صيانة المعدات', attendees: 10 },
+        { time: '16:30 - 17:30', title: 'Team Coordination Meeting | اجتماع تنسيق الفريق', attendees: 22 },
+        { time: '09:30 - 11:00', title: 'Community Outreach Planning | تخطيط التوعية المجتمعية', attendees: 20 },
+        { time: '12:30 - 13:30', title: 'Medical Response Drill | تمرين الاستجابة الطبية', attendees: 16 },
+        { time: '14:00 - 15:30', title: 'Strategic Planning Session | جلسة التخطيط الاستراتيجي', attendees: 12 },
+        { time: '17:00 - 18:00', title: 'Incident Review Meeting | اجتماع مراجعة الحوادث', attendees: 8 },
+        { time: '18:30 - 19:30', title: 'Volunteer Coordination | تنسيق المتطوعين', attendees: 30 }
+    ];
+    
+    // Generate carousel items
+    const carouselInner = document.getElementById('carouselInner');
+    meetings.forEach(meeting => {
+        const meetingItem = document.createElement('div');
+        // Plain responsive class - media queries in CSS handle breakpoints
+        meetingItem.className = 'embla__slide carousel-item slide-4 flex-shrink-0 bg-white/15 backdrop-blur-sm border border-white/20 rounded-xl p-5 text-center';
+        meetingItem.innerHTML = `
+            <div class="text-yellow-400 font-bold text-base">${meeting.time}</div>
+            <div class="mt-1 text-base">${meeting.title}</div>
+            <div class="mt-2 flex items-center justify-center text-sm">
+                <i class="fas fa-users mr-2" aria-hidden="true"></i>
+                <span>${meeting.attendees} attendees</span>
+            </div>
+        `;
+        meetingItem.setAttribute('role', 'listitem');
+        meetingItem.setAttribute('aria-label', `${meeting.time} — ${meeting.title} — ${meeting.attendees} attendees`);
+        carouselInner.appendChild(meetingItem);
+    });
+    
+    // Initialize Embla carousel (with autoplay)
+    let embla;
+    const emblaViewport = document.querySelector('.embla__viewport');
+    const emblaRoot = document.querySelector('.embla');
+    if (typeof EmblaCarousel === 'function' && emblaViewport) {
+        embla = EmblaCarousel(emblaViewport, { containScroll: 'trimSnaps', align: 'start', loop: true, speed: 8 });
+
+        // Auto-play (resume on mouseleave)
+        let autoplayTimer = setInterval(() => embla.scrollNext(), 3500);
+        const startAutoplay = () => { if (!autoplayTimer) autoplayTimer = setInterval(() => embla.scrollNext(), 3500); };
+        const stopAutoplay = () => { if (autoplayTimer) { clearInterval(autoplayTimer); autoplayTimer = null; } };
+
+        emblaRoot.addEventListener('mouseenter', stopAutoplay);
+        emblaRoot.addEventListener('mouseleave', startAutoplay);
+        emblaRoot.addEventListener('focusin', stopAutoplay);
+        emblaRoot.addEventListener('focusout', startAutoplay);
+
+        // Re-init on resize (debounced) to ensure loop clones and snap positions are correct
+        let resizeTimer = null;
+        window.addEventListener('resize', () => {
+            if (resizeTimer) clearTimeout(resizeTimer);
+            resizeTimer = setTimeout(() => {
+                try { embla.reInit(); } catch (e) { /* ignore */ }
+            }, 150);
+        });
+
+        // Ensure proper init after layout (in case fonts or rendering shifted sizes)
+        setTimeout(() => { try { embla.reInit(); } catch (e) {} }, 200);
+        // Navigation
+        // Keyboard nav (embla will handle scroll, no buttons required)
+        window.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowLeft') { stopAutoplay(); embla.scrollPrev(); startAutoplay(); }
+            if (e.key === 'ArrowRight') { stopAutoplay(); embla.scrollNext(); startAutoplay(); }
+        });
+
+        // Set active class on init and on select
+        const updateActive = () => {
+            try {
+                const slidesInView = embla.slidesInView();
+                document.querySelectorAll('.carousel-item').forEach((item, i) => {
+                    if (slidesInView.indexOf(i) !== -1) item.classList.add('active'); else item.classList.remove('active');
+                });
+            } catch (err) {
+                const selected = embla.selectedScrollSnap();
+                const slides = embla.slideNodes();
+                const visible = slides.length ? Math.max(1, Math.round(embla.containerNode().getBoundingClientRect().width / slides[0].getBoundingClientRect().width)) : 1;
+                document.querySelectorAll('.carousel-item').forEach((item, i) => {
+                    if (i >= selected && i < selected + visible) item.classList.add('active'); else item.classList.remove('active');
+                });
+            }
+        };
+        embla.on('select', updateActive);
+        embla.on('init', updateActive);
+    } else {
+        // Fallback: rotate slides by moving first child to the end (looping)
+        let fallbackTimer = setInterval(() => {
+            const container = document.getElementById('carouselInner');
+            if (!container || !container.firstElementChild) return;
+            container.appendChild(container.firstElementChild);
+        }, 3500);
+        window.addEventListener('keydown', (e) => {
+            const container = document.getElementById('carouselInner');
+            if (!container) return;
+            if (e.key === 'ArrowLeft') {
+                container.insertBefore(container.lastElementChild, container.firstElementChild);
+            }
+            if (e.key === 'ArrowRight') {
+                container.appendChild(container.firstElementChild);
+            }
+        });
+    }
+
+    // Set initial hall status to Available
+    setStatus('available');
+    
+    // Hall status helper (applies full-page gradient + contrast)
+    function setStatus(key) {
+        const map = {
+            available: {
+                text: 'Available | متاح',
+                icon: 'fa-check',
+                pulseColor: 'bg-green-600',
+                bodyBg: 'linear-gradient(135deg, #10b981 0%, #059669 25%, #047857 50%, #065f46 75%, #064e3b 100%)',
+                textColor: '#ffffff'
+            },
+            engaged: {
+                text: 'Engaged | مشغول',
+                icon: 'fa-times',
+                pulseColor: 'bg-red-500',
+                bodyBg: 'linear-gradient(135deg, #ef4444 0%, #dc2626 25%, #b91c1c 50%, #991b1b 75%, #7f1d1d 100%)',
+                textColor: '#ffffff'
+            },
+            upcoming: {
+                text: 'Starting Soon | يبدأ قريباً',
+                icon: 'fa-clock',
+                pulseColor: 'bg-orange-400',
+                bodyBg: 'linear-gradient(135deg, #fb923c 0%, #f97316 25%, #ea580c 50%, #c2410c 75%, #9a3412 100%)',
+                textColor: '#ffffff'
+            }
+        };
+
+        const s = map[key];
+        if (!s) return;
+
+        // Apply the full-page gradient to body for clear visual state
+        document.body.style.background = s.bodyBg;
+        document.body.style.color = s.textColor;
+
+        // Keep hall container transparent so body gradient shows through
+        const hall = document.getElementById('hallStatus');
+        hall.className = 'min-h-screen';
+        hall.style.background = 'transparent';
+
+        document.getElementById('statusText').textContent = s.text;
+        const pulse = document.getElementById('statusPulse');
+        pulse.className = `w-24 h-24 rounded-full ${s.pulseColor} flex items-center justify-center animate-pulse-slow`;
+        pulse.innerHTML = `<i class="fas ${s.icon} text-white text-2xl"></i>`;
+
+        // Ensure header and primary panels remain readable (glass effect)
+        const header = document.querySelector('header');
+        if (header) header.style.color = s.textColor;
+
+        // Ensure text inside important containers uses contrast color as well
+        document.querySelectorAll('.text-gray-800, .text-gray-700, .text-gray-600').forEach(el => {
+            el.style.color = s.textColor;
+        });
+    }
+
+    // Simulate hall status changes (for demo purposes)
+    function simulateStatus() {
+        const keys = ['available','engaged','upcoming'];
+        let statusIndex = 0;
+        setInterval(() => {
+            setStatus(keys[statusIndex]);
+            statusIndex = (statusIndex + 1) % keys.length;
+        }, 10000);
+    }
+
+    // Uncomment to simulate status changes
+    // simulateStatus();
+});

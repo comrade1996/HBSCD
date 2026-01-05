@@ -1,0 +1,156 @@
+/* styles.css - extracted from HBSCD.html */
+:root {
+    --glass-bg: rgba(255,255,255,0.6);
+}
+
+body {
+    font-family: 'Inter', 'Noto Naskh Arabic', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+    background-size: 400% 400%;
+    animation: gradientShift 15s ease infinite;
+}
+
+@keyframes gradientShift {
+    0% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+/* Slightly stronger header transparency for glassmorphism */
+header.glass {
+    /* background: linear-gradient(180deg, rgba(255,255,255,0.7), rgba(255,255,255,0.5));
+    backdrop-filter: blur(10px); */
+    margin: 0.5rem 1rem;
+    border-radius: 0.75rem;
+    width: calc(100% - 2rem);
+}
+/* Sticky Amenities bar placed just below the header and hidden under it (lower z-index) */
+.amenities-bar {
+    position: sticky;
+    top: 0;
+    z-index: 40; /* lower than header's z-50 so header overlays it */
+    margin: -0.5rem 1rem 0 1rem; /* tuck upwards so header covers it */
+    padding: 0.35rem 0.5rem;
+    border-radius: 0.75rem;
+    background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));
+    backdrop-filter: blur(8px);
+    pointer-events: auto; /* icons remain interactive */
+}
+
+.amenities-bar .w-8 { flex-shrink: 0; }
+/* Pulsating rings animation for status indicator */
+.status-pulse-container {
+    position: relative;
+    display: inline-block;
+}
+
+.status-pulse-container::before,
+.status-pulse-container::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    border: 3px solid currentColor;
+    opacity: 0;
+    animation: pulse-ring 2s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
+}
+
+.status-pulse-container::after {
+    animation-delay: 1s;
+}
+
+@keyframes pulse-ring {
+    0% {
+        transform: translate(-50%, -50%) scale(0.8);
+        opacity: 1;
+    }
+    100% {
+        transform: translate(-50%, -50%) scale(2);
+        opacity: 0;
+    }
+}
+
+/* Transitions */
+#hallStatus {
+    transition: background 600ms ease, color 300ms ease;
+}
+
+.carousel-item {
+    transition: transform 0.4s cubic-bezier(.22,.9,.27,1), box-shadow 0.3s ease;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
+
+.carousel-item.active {
+    transform: scale(1.02);
+    border-color: rgba(255,255,255,0.25);
+}
+
+/* Footer fixed at bottom */
+footer { 
+    background: rgba(255,255,255,0.06); 
+    border-radius: 1rem 1rem 0 0; 
+    border: 1px solid rgba(255,255,255,0.06);
+    z-index: 40;
+}
+
+/* Subtle border for carousel items */
+.carousel-item { border-radius: 0.5rem; border: 1px solid rgba(255,255,255,0.06); min-height: 120px; display: flex; flex-direction: column; justify-content: center; align-items: center; } 
+
+@media (min-width: 1024px) {
+    .carousel-item { min-height: 140px; }
+}
+
+/* Embla carousel base styles */
+.embla { position: relative; padding: 0.5rem 0; }
+.embla__viewport { overflow: hidden; width: 80%; padding: 0 0.75rem; margin: 0 auto; }
+.embla__container { display: flex; gap: 1.5rem; padding: 0.5rem 0; }
+.embla__slide { flex: 0 0 auto; min-width: 0; }
+
+/* Carousel item padding and spacing enhancement */
+.carousel-item { padding: 1rem 1.25rem; }
+
+/* Responsive slide widths - mobile 1, tablet 2, desktop 4 */
+.slide-4 { 
+    flex: 0 0 100%; 
+    max-width: 100%; 
+}
+
+@media (min-width: 640px) {
+    /* 2 slides with gap 1.5rem between them */
+    .slide-4 { flex: 0 0 calc(50% - 0.75rem); max-width: calc(50% - 0.75rem); }
+}
+
+@media (min-width: 1024px) {
+    /* 4 slides with gaps 1.5rem between them (4.5rem total) */
+    /* per-slide subtraction = (gap * (count - 1))/count = (1.5rem * 3)/4 = 1.125rem */
+    .slide-4 { flex: 0 0 calc(25% - 1.125rem); max-width: calc(25% - 1.125rem); }
+}
+
+/* Keep legacy .slide-3 definitions available (in case used elsewhere) */
+.slide-3 { 
+    flex: 0 0 100%; 
+    max-width: 100%; 
+}
+
+@media (min-width: 640px) {
+    .slide-3 { flex: 0 0 calc(50% - 0.5rem); max-width: calc(50% - 0.5rem); }
+}
+
+@media (min-width: 1024px) {
+    .slide-3 { flex: 0 0 calc(33.333% - 0.667rem); max-width: calc(33.333% - 0.667rem); }
+}
+/* Remove shadows from cards/components (explicit utility fallback) */
+.shadow-sm, .shadow-lg, .shadow { box-shadow: none !important; }

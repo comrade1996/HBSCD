@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>HBSCD - Hall Booking System Civil Defense</title>
+    <!-- Fonts for English/Arabic -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Noto+Naskh+Arabic:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <script src="tailwind-config.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body class="font-sans">
+    <!-- State Indicator - This will change based on hall status -->
+    <div
+      id="hallStatus"
+      class="min-h-screen"
+      role="main"
+      aria-label="Hall status and schedule"
+    >
+      <!-- Transparent Header -->
+      <header class="glass bg-white/5 backdrop-blur-sm fixed py-4 px-4 z-50">
+        <div
+          class="flex flex-col md:flex-row px-4 md:px-8 justify-between items-start md:items-center"
+        >
+          <!-- Left Section: Hall Info -->
+          <div class="text-right md:text-right">
+            <h1 class="text-xl md:text-2xl font-bold text-gray-800">
+              Sas Al Nakhl Meeting Room | قاعة ساس النخل
+            </h1>
+            <div
+              class="flex items-center mt-0.5 text-sm md:text-base font-semibold"
+            >
+              <span class="text-gray-600"
+                >ADCDA Headquarters | المقر الرئيسي لهيئة الدفاع المدني</span
+              >
+              <div class="flex items-center mr-3 rtl:ml-3">
+                <i
+                  class="fas fa-users text-gray-100 ml-8"
+                  aria-hidden="true"
+                ></i>
+                <span id="attendeeCount" class="text-gray-700 ml-1">24</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right Section: Time & Date -->
+          <div class="text-right mt-2 md:mt-0">
+            <div
+              id="currentTime"
+              class="text-xl md:text-4xl font-extrabold text-gray-800"
+              aria-live="polite"
+              aria-atomic="true"
+            >
+              14:30
+            </div>
+            <div
+              id="currentDate"
+              class="text-sm font-semibold text-gray-600"
+              aria-live="polite"
+              aria-atomic="true"
+            >
+              Monday, January 5, 2026
+            </div>
+            <div
+              id="hijriDate"
+              class="text-sm font-semibold text-gray-600"
+              aria-live="polite"
+              aria-atomic="true"
+            >
+              6 Rajab 1447 AH
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- Main Content -->
+      <main class="pt-28 pb-48 px-4 flex justify-center items-center">
+        <div class="w-full max-w-6xl mx-auto">
+          <div class="flex flex-col justify-center items-center gap-8">
+            <!-- top Column -->
+            <div class="w-full md:w-1/2 flex flex-col gap-6">
+              <!-- Left Panel: Hall Status & Next Meeting -->
+              <div class="w-full rounded-xl p-8 md:p-10">
+                <div class="text-center">
+                  <!-- Pulsing Status Indicator -->
+                  <div class="flex justify-center mb-8 mt-8">
+                    <div class="status-pulse-container relative">
+                      <div
+                        id="statusPulse"
+                        class="w-24 h-24 rounded-full bg-green-500 flex items-center justify-center relative z-10"
+                      >
+                        <i class="fas fa-check text-white text-2xl"></i>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Status Text -->
+                  <div
+                    id="statusText"
+                    class="text-xl font-bold text-gray-800 mb-4"
+                  >
+                    Available | متاح
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- middle Column -->
+            <!-- Next Meeting Info (moved inside left column for stacked on small screens) -->
+            <div
+              class="w-full md:w-1/2 bg-white/5 backdrop-blur-sm rounded-lg border border-2 border-dashed border-white/20 p-4 md:p-6"
+            >
+              <div class="text-base font-semibold text-gray-800 mb-2">
+                Next Meeting | الاجتماع القادم
+              </div>
+              <div id="nextMeetingTitle" class="text-gray-700 mb-2 text-sm">
+                Emergency Response Planning | تخطيط الاستجابة للطوارئ
+              </div>
+              <div class="flex items-center">
+                <i class="fas fa-clock text-gray-500 mr-2 text-sm"></i>
+                <span id="nextMeetingTime" class="text-gray-700 text-sm"
+                  >Starts at 15:00 | يبدأ الساعة 15:00</span
+                >
+              </div>
+            </div>
+
+            <!-- bottom column -->
+            <!-- Amenities Bar (sticky, hidden under header) -->
+            <div class="w-full">
+              <div
+                class="flex justify-center gap-3 w-full max-w-6xl mx-auto px-4"
+              >
+                <div
+                  class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center"
+                  title="Projector | جهاز عرض"
+                >
+                  <i class="fas fa-video text-blue-600 text-sm"></i>
+                </div>
+                <div
+                  class="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center"
+                  title="Whiteboard | سبورة بيضاء"
+                >
+                  <i class="fas fa-chalkboard text-green-600 text-sm"></i>
+                </div>
+                <div
+                  class="w-8 h-8 rounded-full bg-purple-100 flex items-center justify-center"
+                  title="Video Conference | مؤتمر فيديو"
+                >
+                  <i class="fas fa-video text-purple-600 text-sm"></i>
+                </div>
+                <div
+                  class="w-8 h-8 rounded-full bg-yellow-100 flex items-center justify-center"
+                  title="Large Screen | شاشة كبيرة"
+                >
+                  <i class="fas fa-desktop text-yellow-600 text-sm"></i>
+                </div>
+                <div
+                  class="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center"
+                  title="WiFi | واي فاي"
+                >
+                  <i class="fas fa-wifi text-indigo-600 text-sm"></i>
+                </div>
+                <div
+                  class="w-8 h-8 rounded-full bg-red-100 flex items-center justify-center"
+                  title="Audio System | نظام الصوت"
+                >
+                  <i class="fas fa-volume-up text-red-600 text-sm"></i>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+
+      <!-- Footer Carousel -->
+      <footer
+        class="fixed bottom-0 left-0 right-0 bg-white/5 backdrop-blur-sm py-4 mx-4 mb-4 rounded-t-xl"
+      >
+        <div class="px-4 md:px-8 mx-auto">
+          <h3 class="text-base font-bold mb-3 text-center">
+            Today's Meetings | اجتماعات اليوم
+          </h3>
+
+          <div
+            id="carousel"
+            class="embla"
+            role="region"
+            aria-label="Today's Meetings"
+          >
+            <div class="embla__viewport overflow-hidden">
+              <div id="carouselInner" class="embla__container flex" role="list">
+                <!-- Meeting Items will be generated by JS -->
+              </div>
+            </div>
+          </div>
+        </div>
+      </footer>
+    </div>
+
+    <script src="https://unpkg.com/embla-carousel@7/embla-carousel.umd.js"></script>
+    <script src="script.js"></script>
+  </body>
+</html>
