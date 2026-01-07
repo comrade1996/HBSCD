@@ -43,6 +43,13 @@ document.addEventListener('DOMContentLoaded', () => {
     updateTime();
     setInterval(updateTime, 60000);
     
+    // Helper: wrap Arabic part of bilingual strings with a span
+    function formatBilingual(text) {
+        if (!text || !text.includes('|')) return text;
+        const parts = text.split('|').map(s => s.trim());
+        return `${parts[0]} | <span lang="ar" class="arabic">${parts[1]}</span>`;
+    }
+
     // Meeting data for carousel
     const meetings = [
         { time: '09:00 - 10:30', title: 'Emergency Response Training | تدريب الاستجابة للطوارئ', attendees: 18 },
@@ -61,13 +68,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const carouselInner = document.getElementById('carouselInner');
     meetings.forEach(meeting => {
         const meetingItem = document.createElement('div');
-        // Plain responsive class - media queries in CSS handle breakpoints
-        meetingItem.className = 'embla__slide carousel-item slide-4 flex-shrink-0 bg-white/15 backdrop-blur-sm border border-white/20 rounded-xl p-5 text-center';
+        // Using embla__slide class from integrated embla folder structure
+        meetingItem.className = 'embla__slide carousel-item flex-shrink-0 bg-white/15 backdrop-blur-sm border border-white/20 rounded-xl text-center';
         meetingItem.innerHTML = `
-            <div class="text-yellow-400 font-bold text-base">${meeting.time}</div>
-            <div class="mt-1 text-base">${meeting.title}</div>
+            <div class="text-yellow-400 font-extrabold text-base">${meeting.time}</div>
+            <div class="mt-1 text-base font-medium">${formatBilingual(meeting.title)}</div>
             <div class="mt-2 flex items-center justify-center text-sm">
-                <i class="fas fa-users mr-2" aria-hidden="true"></i>
+                <i class="fas fa-users mr-2 text-xs" aria-hidden="true"></i>
                 <span>${meeting.attendees} attendees</span>
             </div>
         `;
@@ -76,17 +83,42 @@ document.addEventListener('DOMContentLoaded', () => {
         carouselInner.appendChild(meetingItem);
     });
     
-    // Initialize Embla carousel (with autoplay)
+    // Initialize Embla carousel (with autoscroll)
     let embla;
+    let autoScroll;
     const emblaViewport = document.querySelector('.embla__viewport');
     const emblaRoot = document.querySelector('.embla');
+    
+    // Create progress bar for autoscroll
+    const progressBar = document.createElement('div');
+    progressBar.className = 'embla__progress';
+    progressBar.innerHTML = '<div class="embla__progress__bar"></div>';
+    emblaRoot.appendChild(progressBar);
+    const progressBarInner = progressBar.querySelector('.embla__progress__bar');
+    
     if (typeof EmblaCarousel === 'function' && emblaViewport) {
         embla = EmblaCarousel(emblaViewport, { containScroll: 'trimSnaps', align: 'start', loop: true, speed: 8 });
 
-        // Auto-play (resume on mouseleave)
-        let autoplayTimer = setInterval(() => embla.scrollNext(), 3500);
-        const startAutoplay = () => { if (!autoplayTimer) autoplayTimer = setInterval(() => embla.scrollNext(), 3500); };
-        const stopAutoplay = () => { if (autoplayTimer) { clearInterval(autoplayTimer); autoplayTimer = null; } };
+        // Autoscroll with progress bar (4 second interval) using helper
+        const AUTOPLAY_INTERVAL = 4000;
+        progressBarInner.style.animationDuration = `${AUTOPLAY_INTERVAL}ms`;
+        
+        // Use the EmblaHelpers autoscroll
+        autoScroll = EmblaHelpers.addAutoScroll(embla, {
+            delay: AUTOPLAY_INTERVAL,
+            stopOnInteraction: false,
+            loop: true
+        });
+
+        const startAutoplay = () => { 
+            autoScroll.start();
+            progressBarInner.style.animationPlayState = 'running';
+        };
+        
+        const stopAutoplay = () => { 
+            autoScroll.stop();
+            progressBarInner.style.animationPlayState = 'paused';
+        };
 
         emblaRoot.addEventListener('mouseenter', stopAutoplay);
         emblaRoot.addEventListener('mouseleave', startAutoplay);
@@ -104,11 +136,27 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Ensure proper init after layout (in case fonts or rendering shifted sizes)
         setTimeout(() => { try { embla.reInit(); } catch (e) {} }, 200);
-        // Navigation
-        // Keyboard nav (embla will handle scroll, no buttons required)
+        
+        // Reset progress bar animation on slide change
+        embla.on('select', () => {
+            progressBarInner.style.animation = 'none';
+            setTimeout(() => {
+                progressBarInner.style.animation = null;
+            }, 10);
+        });
+        
+        // Navigation - Keyboard nav with autoscroll reset
         window.addEventListener('keydown', (e) => {
-            if (e.key === 'ArrowLeft') { stopAutoplay(); embla.scrollPrev(); startAutoplay(); }
-            if (e.key === 'ArrowRight') { stopAutoplay(); embla.scrollNext(); startAutoplay(); }
+            if (e.key === 'ArrowLeft') { 
+                stopAutoplay(); 
+                embla.scrollPrev(); 
+                setTimeout(startAutoplay, 100);
+            }
+            if (e.key === 'ArrowRight') { 
+                stopAutoplay(); 
+                embla.scrollNext(); 
+                setTimeout(startAutoplay, 100);
+            }
         });
 
         // Set active class on init and on select
@@ -155,24 +203,24 @@ document.addEventListener('DOMContentLoaded', () => {
     function setStatus(key) {
         const map = {
             available: {
-                text: 'Available | متاح',
+                text: 'Available | <span lang="ar" class="arabic">متـــــــاح</span>',
                 icon: 'fa-check',
                 pulseColor: 'bg-green-600',
-                bodyBg: 'linear-gradient(135deg, #10b981 0%, #059669 25%, #047857 50%, #065f46 75%, #064e3b 100%)',
+                bodyBg: 'linear-gradient(135deg, #10b981 0%, #059669 15%, #047857 30%, #10b981 45%, #065f46 60%, #047857 75%, #064e3b 90%, #10b981 100%)',
                 textColor: '#ffffff'
             },
             engaged: {
-                text: 'Engaged | مشغول',
+                text: 'Engaged | <span lang="ar" class="arabic">مشغول</span>',
                 icon: 'fa-times',
                 pulseColor: 'bg-red-500',
-                bodyBg: 'linear-gradient(135deg, #ef4444 0%, #dc2626 25%, #b91c1c 50%, #991b1b 75%, #7f1d1d 100%)',
+                bodyBg: 'linear-gradient(135deg, #ef4444 0%, #dc2626 15%, #b91c1c 30%, #ef4444 45%, #991b1b 60%, #dc2626 75%, #7f1d1d 90%, #ef4444 100%)',
                 textColor: '#ffffff'
             },
             upcoming: {
-                text: 'Starting Soon | يبدأ قريباً',
+                text: 'Starting Soon | <span lang="ar" class="arabic">يبدأ قريباً</span>',
                 icon: 'fa-clock',
                 pulseColor: 'bg-orange-400',
-                bodyBg: 'linear-gradient(135deg, #fb923c 0%, #f97316 25%, #ea580c 50%, #c2410c 75%, #9a3412 100%)',
+                bodyBg: 'linear-gradient(135deg, #fb923c 0%, #f97316 15%, #ea580c 30%, #fb923c 45%, #c2410c 60%, #f97316 75%, #9a3412 90%, #fb923c 100%)',
                 textColor: '#ffffff'
             }
         };
@@ -182,6 +230,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Apply the full-page gradient to body for clear visual state
         document.body.style.background = s.bodyBg;
+        document.body.style.backgroundSize = '400% 400%';
         document.body.style.color = s.textColor;
 
         // Keep hall container transparent so body gradient shows through
@@ -189,7 +238,7 @@ document.addEventListener('DOMContentLoaded', () => {
         hall.className = 'min-h-screen';
         hall.style.background = 'transparent';
 
-        document.getElementById('statusText').textContent = s.text;
+        document.getElementById('statusText').innerHTML = s.text;
         const pulse = document.getElementById('statusPulse');
         pulse.className = `w-24 h-24 rounded-full ${s.pulseColor} flex items-center justify-center animate-pulse-slow`;
         pulse.innerHTML = `<i class="fas ${s.icon} text-white text-2xl"></i>`;

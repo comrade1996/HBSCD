@@ -3,21 +3,37 @@
     --glass-bg: rgba(255,255,255,0.6);
 }
 
+/* Local Noto Kufi font (included in project root) */
+@font-face {
+    font-family: 'Noto Kufi';
+    src: url('NotoKufiArabic-VariableFont_wght.ttf') format('truetype');
+    font-weight: 100 900;
+    font-style: normal;
+    font-display: swap;
+}
+
 body {
-    font-family: 'Inter', 'Noto Naskh Arabic', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+    font-family: 'Noto Kufi';
     background-size: 400% 400%;
     animation: gradientShift 15s ease infinite;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* Utility to force Arabic sections to use Noto Kufi directly */
+.arabic, :lang(ar) {
+    font-family: 'Noto Kufi', sans-serif;
 }
 
 @keyframes gradientShift {
     0% {
-        background-position: 0% 50%;
-    }
-    50% {
         background-position: 100% 50%;
     }
-    100% {
+    50% {
         background-position: 0% 50%;
+    }
+    100% {
+        background-position: 100% 50%;
     }
 }
 
@@ -29,20 +45,12 @@ header.glass {
     border-radius: 0.75rem;
     width: calc(100% - 2rem);
 }
-/* Sticky Amenities bar placed just below the header and hidden under it (lower z-index) */
-.amenities-bar {
-    position: sticky;
-    top: 0;
-    z-index: 40; /* lower than header's z-50 so header overlays it */
-    margin: -0.5rem 1rem 0 1rem; /* tuck upwards so header covers it */
-    padding: 0.35rem 0.5rem;
-    border-radius: 0.75rem;
-    background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));
-    backdrop-filter: blur(8px);
-    pointer-events: auto; /* icons remain interactive */
+/* Inline amenities inside Next Meeting card */
+.next-amenities {
+    margin-top: 0.5rem;
 }
 
-.amenities-bar .w-8 { flex-shrink: 0; }
+.next-amenities .w-8 { flex-shrink: 0; }
 /* Pulsating rings animation for status indicator */
 .status-pulse-container {
     position: relative;
@@ -107,50 +115,100 @@ footer {
 }
 
 /* Subtle border for carousel items */
-.carousel-item { border-radius: 0.5rem; border: 1px solid rgba(255,255,255,0.06); min-height: 120px; display: flex; flex-direction: column; justify-content: center; align-items: center; } 
-
-@media (min-width: 1024px) {
-    .carousel-item { min-height: 140px; }
+.carousel-item { 
+    border-radius: 0.5rem; 
+    border: 1px solid rgba(255,255,255,0.06); 
+    display: flex; 
+    flex-direction: column; 
+    justify-content: center; 
+    align-items: center; 
 }
 
-/* Embla carousel base styles */
-.embla { position: relative; padding: 0.5rem 0; }
-.embla__viewport { overflow: hidden; width: 80%; padding: 0 0.75rem; margin: 0 auto; }
-.embla__container { display: flex; gap: 1.5rem; padding: 0.5rem 0; }
-.embla__slide { flex: 0 0 auto; min-width: 0; }
+/* Embla carousel base styles - integrated from embla folder */
+.embla {
+  max-width: 1800px;
+  margin: auto;
+  --slide-height: 11rem;
+  --slide-spacing: 2rem;
+  --slide-size: 100%;
+  position: relative;
+  padding: 0.5rem 0;
+}
+
+.embla__viewport {
+  overflow: hidden;
+}
+
+.embla__container {
+  display: flex;
+  touch-action: pan-y pinch-zoom;
+  margin-left: calc(var(--slide-spacing) * -1);
+  gap: var(--slide-spacing);
+}
+
+.embla__slide {
+  transform: translate3d(0, 0, 0);
+  flex: 0 0 calc(var(--slide-size) - var(--slide-spacing));
+  min-width: 0;
+}
 
 /* Carousel item padding and spacing enhancement */
-.carousel-item { padding: 1rem 1.25rem; }
-
-/* Responsive slide widths - mobile 1, tablet 2, desktop 4 */
-.slide-4 { 
-    flex: 0 0 100%; 
-    max-width: 100%; 
+.carousel-item { 
+  padding: 0.75rem 1rem; 
+  height: var(--slide-height);
+  user-select: none;
 }
 
-@media (min-width: 640px) {
-    /* 2 slides with gap 1.5rem between them */
-    .slide-4 { flex: 0 0 calc(50% - 0.75rem); max-width: calc(50% - 0.75rem); }
+/* Responsive slide widths using CSS custom properties */
+@media (max-width: 639px) {
+    .embla {
+        --slide-size: 100%;
+    }
 }
 
-@media (min-width: 1024px) {
-    /* 4 slides with gaps 1.5rem between them (4.5rem total) */
-    /* per-slide subtraction = (gap * (count - 1))/count = (1.5rem * 3)/4 = 1.125rem */
-    .slide-4 { flex: 0 0 calc(25% - 1.125rem); max-width: calc(25% - 1.125rem); }
-}
-
-/* Keep legacy .slide-3 definitions available (in case used elsewhere) */
-.slide-3 { 
-    flex: 0 0 100%; 
-    max-width: 100%; 
-}
-
-@media (min-width: 640px) {
-    .slide-3 { flex: 0 0 calc(50% - 0.5rem); max-width: calc(50% - 0.5rem); }
+@media (min-width: 640px) and (max-width: 1023px) {
+    .embla {
+        --slide-size: 50%;
+    }
 }
 
 @media (min-width: 1024px) {
-    .slide-3 { flex: 0 0 calc(33.333% - 0.667rem); max-width: calc(33.333% - 0.667rem); }
+    .embla {
+        --slide-size: 33.333%;
+    }
 }
+/* Embla autoscroll progress bar - from embla folder */
+.embla__progress {
+  border-radius: 0.5rem;
+  background-color: rgba(255, 255, 255, 0.1);
+  position: relative;
+  height: 0.4rem;
+  width: 100%;
+  max-width: 300px;
+  margin: 0.75rem auto 0;
+  overflow: hidden;
+}
+
+.embla__progress__bar {
+  background-color: rgba(255, 255, 255, 0.5);
+  position: absolute;
+  width: 100%;
+  top: 0;
+  bottom: 0;
+  left: -100%;
+  animation-name: autoplay-progress;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+
+@keyframes autoplay-progress {
+  0% {
+    transform: translate3d(0, 0, 0);
+  }
+  100% {
+    transform: translate3d(100%, 0, 0);
+  }
+}
+
 /* Remove shadows from cards/components (explicit utility fallback) */
 .shadow-sm, .shadow-lg, .shadow { box-shadow: none !important; }
