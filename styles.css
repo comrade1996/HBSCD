@@ -126,10 +126,10 @@ footer {
 
 /* Embla carousel base styles - integrated from embla folder */
 .embla {
-  max-width: 1800px;
+  max-width: 1500px;
   margin: auto;
-  --slide-height: 11rem;
-  --slide-spacing: 2rem;
+  --slide-height: 12rem;
+  --slide-spacing: 1.25rem;
   --slide-size: 100%;
   position: relative;
   padding: 0.5rem 0;
@@ -137,44 +137,76 @@ footer {
 
 .embla__viewport {
   overflow: hidden;
+  padding: 0.5rem;
+  position: relative;
+  --fade-color-left: rgba(16, 185, 129, 0.35);
+  --fade-color-right: rgba(16, 185, 129, 0.35);
+}
+
+.embla__viewport::before,
+.embla__viewport::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 6rem;
+  z-index: 10;
+  pointer-events: none;
+  transition: background 0.6s ease;
+}
+
+.embla__viewport::before {
+  left: 0;
+  background: linear-gradient(to right, var(--fade-color-left), transparent);
+}
+
+.embla__viewport::after {
+  right: 0;
+  background: linear-gradient(to left, var(--fade-color-right), transparent);
 }
 
 .embla__container {
   display: flex;
   touch-action: pan-y pinch-zoom;
-  margin-left: calc(var(--slide-spacing) * -1);
   gap: var(--slide-spacing);
 }
 
 .embla__slide {
   transform: translate3d(0, 0, 0);
-  flex: 0 0 calc(var(--slide-size) - var(--slide-spacing));
+  flex: 0 0 var(--slide-size);
   min-width: 0;
 }
 
 /* Carousel item padding and spacing enhancement */
 .carousel-item { 
-  padding: 0.75rem 1rem; 
-  height: var(--slide-height);
+  padding: 1.5rem 1.25rem; 
+  height: 100%;
   user-select: none;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.carousel-item:hover {
+  transform: translateY(-2px);
+  background: rgba(255,255,255,0.2) !important;
+  border-color: rgba(255,255,255,0.3);
 }
 
 /* Responsive slide widths using CSS custom properties */
 @media (max-width: 639px) {
     .embla {
-        --slide-size: 100%;
+        --slide-size: calc(100% - var(--slide-spacing));
     }
 }
 
 @media (min-width: 640px) and (max-width: 1023px) {
     .embla {
-        --slide-size: 50%;
+        --slide-size: calc(50% - var(--slide-spacing) / 2);
     }
 }
 
 @media (min-width: 1024px) {
     .embla {
-        --slide-size: 33.333%;
+        --slide-size: calc(33.333% - var(--slide-spacing) * 2 / 3);
     }
 }
 /* Embla autoscroll progress bar - from embla folder */
@@ -212,3 +244,49 @@ footer {
 
 /* Remove shadows from cards/components (explicit utility fallback) */
 .shadow-sm, .shadow-lg, .shadow { box-shadow: none !important; }
+
+/* Floating buttons container (right middle) */
+.floating-buttons {
+  position: fixed;
+  right: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  z-index: 60;
+}
+
+.fullscreen-btn,
+.status-toggle-btn {
+  width: 3.25rem;
+  height: 3.25rem;
+  border-radius: 9999px;
+  background: rgba(255,255,255,0.04);
+  backdrop-filter: blur(6px);
+  border: 1px solid rgba(255,255,255,0.06);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.fullscreen-btn:focus,
+.status-toggle-btn:focus {
+  outline: 2px solid rgba(255,255,255,0.14);
+  outline-offset: 2px;
+}
+
+.fullscreen-btn:hover,
+.status-toggle-btn:hover { 
+  background: rgba(255,255,255,0.08);
+  transform: scale(1.05);
+}
+
+.fullscreen-btn i,
+.status-toggle-btn i { 
+  font-size: 1.1rem; 
+}
+

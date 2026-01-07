@@ -1,4 +1,4 @@
-// Browser-compatible version of Embla carousel helpers
+// Browser-compatible Embla carousel helpers
 (function() {
   'use strict';
 
@@ -50,7 +50,7 @@
   const addAutoScroll = (emblaApi, options = {}) => {
     const { 
       delay = 4000, 
-      stopOnInteraction = true,
+      stopOnInteraction = false,
       stopOnMouseEnter = true,
       stopOnFocusIn = true 
     } = options;
@@ -62,11 +62,7 @@
       if (isAutoScrolling) return;
       isAutoScrolling = true;
       autoScrollTimer = setInterval(() => {
-        if (emblaApi.canScrollNext()) {
-          emblaApi.scrollNext();
-        } else if (options.loop !== false) {
-          emblaApi.scrollTo(0);
-        }
+        emblaApi.scrollNext();
       }, delay);
     };
 
@@ -81,22 +77,13 @@
 
     const resetAutoScroll = () => {
       stopAutoScroll();
-      if (!stopOnInteraction) {
-        setTimeout(startAutoScroll, 100);
-      }
+      setTimeout(startAutoScroll, 100);
     };
 
-    // Initialize autoscroll
+    // Initialize autoscroll after embla is initialized
     emblaApi.on('init', () => {
       startAutoScroll();
     });
-
-    // Reset on manual scroll
-    if (stopOnInteraction) {
-      emblaApi.on('settle', () => {
-        resetAutoScroll();
-      });
-    }
 
     return {
       start: startAutoScroll,

@@ -85,7 +85,6 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Initialize Embla carousel (with autoscroll)
     let embla;
-    let autoScroll;
     const emblaViewport = document.querySelector('.embla__viewport');
     const emblaRoot = document.querySelector('.embla');
     
@@ -99,25 +98,25 @@ document.addEventListener('DOMContentLoaded', () => {
     if (typeof EmblaCarousel === 'function' && emblaViewport) {
         embla = EmblaCarousel(emblaViewport, { containScroll: 'trimSnaps', align: 'start', loop: true, speed: 8 });
 
-        // Autoscroll with progress bar (4 second interval) using helper
+        // Autoscroll with progress bar (4 second interval)
         const AUTOPLAY_INTERVAL = 4000;
         progressBarInner.style.animationDuration = `${AUTOPLAY_INTERVAL}ms`;
         
-        // Use the EmblaHelpers autoscroll
-        autoScroll = EmblaHelpers.addAutoScroll(embla, {
-            delay: AUTOPLAY_INTERVAL,
-            stopOnInteraction: false,
-            loop: true
-        });
-
+        let autoplayTimer = setInterval(() => embla.scrollNext(), AUTOPLAY_INTERVAL);
+        
         const startAutoplay = () => { 
-            autoScroll.start();
-            progressBarInner.style.animationPlayState = 'running';
+            if (!autoplayTimer) {
+                autoplayTimer = setInterval(() => embla.scrollNext(), AUTOPLAY_INTERVAL);
+                progressBarInner.style.animationPlayState = 'running';
+            }
         };
         
         const stopAutoplay = () => { 
-            autoScroll.stop();
-            progressBarInner.style.animationPlayState = 'paused';
+            if (autoplayTimer) { 
+                clearInterval(autoplayTimer); 
+                autoplayTimer = null;
+                progressBarInner.style.animationPlayState = 'paused';
+            }
         };
 
         emblaRoot.addEventListener('mouseenter', stopAutoplay);
@@ -197,9 +196,10 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Set initial hall status to Available
-    setStatus('available');
+    let currentStatus = 'available';
+    setStatus(currentStatus);
     
-    // Hall status helper (applies full-page gradient + contrast)
+    // Hall status helper (applies full-page gradient + contrast + carousel fade colors)
     function setStatus(key) {
         const map = {
             available: {
@@ -207,26 +207,31 @@ document.addEventListener('DOMContentLoaded', () => {
                 icon: 'fa-check',
                 pulseColor: 'bg-green-600',
                 bodyBg: 'linear-gradient(135deg, #10b981 0%, #059669 15%, #047857 30%, #10b981 45%, #065f46 60%, #047857 75%, #064e3b 90%, #10b981 100%)',
-                textColor: '#ffffff'
+                textColor: '#ffffff',
+                fadeColor: 'rgba(16, 185, 129, 0.35)'
             },
             engaged: {
                 text: 'Engaged | <span lang="ar" class="arabic">مشغول</span>',
                 icon: 'fa-times',
                 pulseColor: 'bg-red-500',
                 bodyBg: 'linear-gradient(135deg, #ef4444 0%, #dc2626 15%, #b91c1c 30%, #ef4444 45%, #991b1b 60%, #dc2626 75%, #7f1d1d 90%, #ef4444 100%)',
-                textColor: '#ffffff'
+                textColor: '#ffffff',
+                fadeColor: 'rgba(239, 68, 68, 0.35)'
             },
             upcoming: {
                 text: 'Starting Soon | <span lang="ar" class="arabic">يبدأ قريباً</span>',
                 icon: 'fa-clock',
                 pulseColor: 'bg-orange-400',
                 bodyBg: 'linear-gradient(135deg, #fb923c 0%, #f97316 15%, #ea580c 30%, #fb923c 45%, #c2410c 60%, #f97316 75%, #9a3412 90%, #fb923c 100%)',
-                textColor: '#ffffff'
+                textColor: '#ffffff',
+                fadeColor: 'rgba(251, 146, 60, 0.35)'
             }
         };
 
         const s = map[key];
         if (!s) return;
+
+        currentStatus = key;
 
         // Apply the full-page gradient to body for clear visual state
         document.body.style.background = s.bodyBg;
@@ -251,6 +256,13 @@ document.addEventListener('DOMContentLoaded', () => {
         document.querySelectorAll('.text-gray-800, .text-gray-700, .text-gray-600').forEach(el => {
             el.style.color = s.textColor;
         });
+
+        // Update carousel fade colors to match status
+        const emblaViewport = document.querySelector('.embla__viewport');
+        if (emblaViewport) {
+            emblaViewport.style.setProperty('--fade-color-left', s.fadeColor);
+            emblaViewport.style.setProperty('--fade-color-right', s.fadeColor);
+        }
     }
 
     // Simulate hall status changes (for demo purposes)
@@ -265,4 +277,47 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Uncomment to simulate status changes
     // simulateStatus();
+
+    // Status toggle button (cycles through available → engaged → upcoming)
+    const statusToggleBtn = document.getElementById('statusToggleBtn');
+    if (statusToggleBtn) {
+        const statusKeys = ['available', 'engaged', 'upcoming'];
+        statusToggleBtn.addEventListener('click', () => {
+            const currentIndex = statusKeys.indexOf(currentStatus);
+            const nextIndex = (currentIndex + 1) % statusKeys.length;
+            setStatus(statusKeys[nextIndex]);
+        });
+    }
+
+    // Fullscreen toggle button (uses Fullscreen API - hides browser chrome in supported browsers)
+    const fsBtn = document.getElementById('fullscreenBtn');
+    if (fsBtn) {
+        const requestFull = (el) => (el.requestFullscreen || el.webkitRequestFullscreen || el.mozRequestFullScreen || el.msRequestFullscreen).call(el);
+        const exitFull = () => (document.exitFullscreen || document.webkitExitFullscreen || document.mozCancelFullScreen || document.msExitFullscreen).call(document);
+
+        fsBtn.addEventListener('click', async () => {
+            try {
+                if (!document.fullscreenElement && !document.webkitFullscreenElement) {
+                    // request fullscreen on root element
+                    (document.documentElement.requestFullscreen || document.documentElement.webkitRequestFullscreen || document.documentElement.mozRequestFullScreen || document.documentElement.msRequestFullscreen).call(document.documentElement);
+                } else {
+                    (document.exitFullscreen || document.webkitExitFullscreen || document.mozCancelFullScreen || document.msExitFullscreen).call(document);
+                }
+            } catch (err) {
+                console.warn('Fullscreen toggle failed', err);
+            }
+        });
+
+        // Keep icon in sync with fullscreen state (handles ESC/F11 toggles)
+        document.addEventListener('fullscreenchange', () => {
+            const icon = fsBtn.querySelector('i');
+            if (document.fullscreenElement) {
+                icon.classList.remove('fa-expand');
+                icon.classList.add('fa-compress');
+            } else {
+                icon.classList.remove('fa-compress');
+                icon.classList.add('fa-expand');
+            }
+        });
+    }
 });
