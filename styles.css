@@ -15,7 +15,7 @@
 body {
     font-family: 'Noto Kufi';
     background-size: 400% 400%;
-    animation: gradientShift 15s ease infinite;
+    animation: gradientWave 20s ease-in-out infinite;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
 }
@@ -25,15 +25,21 @@ body {
     font-family: 'Noto Kufi', sans-serif;
 }
 
-@keyframes gradientShift {
+@keyframes gradientWave {
     0% {
-        background-position: 100% 50%;
-    }
-    50% {
         background-position: 0% 50%;
     }
+    25% {
+        background-position: 100% 100%;
+    }
+    50% {
+        background-position: 100% 0%;
+    }
+    75% {
+        background-position: 0% 100%;
+    }
     100% {
-        background-position: 100% 50%;
+        background-position: 0% 50%;
     }
 }
 
@@ -45,6 +51,62 @@ header.glass {
     border-radius: 0.75rem;
     width: calc(100% - 2rem);
 }
+/* Watermark Logo */
+.watermark-logo {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 400px;
+    max-width: 50vw;
+    height: auto;
+    opacity: 0.08;
+    pointer-events: none;
+    z-index: 0;
+}
+
+/* Fullscreen mode enhancements */
+.fullscreen-mode {
+    padding: 2.5rem 3rem !important;
+}
+
+.fullscreen-mode .text-2xl {
+    font-size: 2rem !important;
+}
+
+.fullscreen-mode .text-xl {
+    font-size: 1.5rem !important;
+}
+
+.fullscreen-mode .text-lg {
+    font-size: 1.375rem !important;
+}
+
+.fullscreen-mode .w-8.h-8 {
+    width: 2.5rem !important;
+    height: 2.5rem !important;
+}
+
+.fullscreen-mode .text-sm {
+    font-size: 1rem !important;
+}
+
+/* Status text: keep on a single line and be responsive */
+#statusText {
+    white-space: nowrap;
+    word-break: keep-all; /* avoid breaking words in languages like Arabic */
+    overflow: visible;
+    /* Use clamp so it scales smoothly but won't grow beyond reasonable bounds */
+    font-size: clamp(1.25rem, 3.2vw, 3.25rem) !important; 
+    line-height: 1.05 !important;
+}
+
+@media (min-width: 768px) {
+    #statusText {
+        font-size: clamp(1.75rem, 2.6vw, 4rem) !important;
+    }
+}
+
 /* Inline amenities inside Next Meeting card */
 .next-amenities {
     margin-top: 0.5rem;
@@ -126,17 +188,19 @@ footer {
 
 /* Embla carousel base styles - integrated from embla folder */
 .embla {
-  max-width: 1500px;
+  
   margin: auto;
   --slide-height: 12rem;
-  --slide-spacing: 1.25rem;
+  --slide-spacing: 2rem;
   --slide-size: 100%;
   position: relative;
-  padding: 0.5rem 0;
+  padding: 0.5rem;
+  overflow: hidden;
 }
 
 .embla__viewport {
-  overflow: hidden;
+  overflow: visible;
+  
   padding: 0.5rem;
   position: relative;
   --fade-color-left: rgba(16, 185, 129, 0.35);
@@ -153,6 +217,7 @@ footer {
   z-index: 10;
   pointer-events: none;
   transition: background 0.6s ease;
+ 
 }
 
 .embla__viewport::before {
@@ -169,12 +234,15 @@ footer {
   display: flex;
   touch-action: pan-y pinch-zoom;
   gap: var(--slide-spacing);
+  backface-visibility: hidden;
+  will-change: transform;
 }
 
 .embla__slide {
   transform: translate3d(0, 0, 0);
   flex: 0 0 var(--slide-size);
   min-width: 0;
+  backface-visibility: hidden;
 }
 
 /* Carousel item padding and spacing enhancement */

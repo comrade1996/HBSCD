@@ -64,9 +64,9 @@ document.addEventListener('DOMContentLoaded', () => {
         { time: '18:30 - 19:30', title: 'Volunteer Coordination | تنسيق المتطوعين', attendees: 30 }
     ];
     
-    // Generate carousel items
+    // Generate carousel items (tripled for seamless continuous loop)
     const carouselInner = document.getElementById('carouselInner');
-    meetings.forEach(meeting => {
+    const createMeetingItem = (meeting) => {
         const meetingItem = document.createElement('div');
         // Using embla__slide class from integrated embla folder structure
         meetingItem.className = 'embla__slide carousel-item flex-shrink-0 bg-white/15 backdrop-blur-sm border border-white/20 rounded-xl text-center';
@@ -80,10 +80,17 @@ document.addEventListener('DOMContentLoaded', () => {
         `;
         meetingItem.setAttribute('role', 'listitem');
         meetingItem.setAttribute('aria-label', `${meeting.time} — ${meeting.title} — ${meeting.attendees} attendees`);
-        carouselInner.appendChild(meetingItem);
-    });
+        return meetingItem;
+    };
     
-    // Initialize Embla carousel (with autoscroll)
+    // Create three copies of the carousel for seamless loop
+    for (let i = 0; i < 3; i++) {
+        meetings.forEach(meeting => {
+            carouselInner.appendChild(createMeetingItem(meeting));
+        });
+    }
+    
+    // Initialize Embla carousel (with continuous marquee autoscroll)
     let embla;
     const emblaViewport = document.querySelector('.embla__viewport');
     const emblaRoot = document.querySelector('.embla');
@@ -96,33 +103,66 @@ document.addEventListener('DOMContentLoaded', () => {
     const progressBarInner = progressBar.querySelector('.embla__progress__bar');
     
     if (typeof EmblaCarousel === 'function' && emblaViewport) {
-        embla = EmblaCarousel(emblaViewport, { containScroll: 'trimSnaps', align: 'start', loop: true, speed: 8 });
+        embla = EmblaCarousel(emblaViewport, { 
+            containScroll: false,
+            align: 'start', 
+            loop: true, 
+            speed: 20,
+            dragFree: false,
+            inViewThreshold: 0
+        });
 
-        // Autoscroll with progress bar (4 second interval)
-        const AUTOPLAY_INTERVAL = 4000;
-        progressBarInner.style.animationDuration = `${AUTOPLAY_INTERVAL}ms`;
+        // Continuous marquee autoscroll (right to left)
+        let autoScrollAnimation = null;
+        let isHovered = false;
+        const SCROLL_SPEED = -1.5; // pixels per frame (negative for right-to-left)
+        const slides = embla.slideNodes();
+        const slideCount = slides.length / 3; // We have 3 copies
         
-        let autoplayTimer = setInterval(() => embla.scrollNext(), AUTOPLAY_INTERVAL);
+        const animate = () => {
+            if (!isHovered && embla) {
+                const engine = embla.internalEngine();
+                let target = engine.location.get() + SCROLL_SPEED;
+                
+                // Seamless loop: reset when we scroll past the first set
+                const slideWidth = slides[0].offsetWidth + parseFloat(getComputedStyle(slides[0].parentElement).gap);
+                const resetPoint = -slideWidth * slideCount;
+                const maxPoint = slideWidth * slideCount;
+                
+                if (target < resetPoint) {
+                    target = target + (slideWidth * slideCount);
+                } else if (target > maxPoint) {
+                    target = target - (slideWidth * slideCount);
+                }
+                
+                engine.location.set(target);
+                engine.translate.to(engine.location);
+                engine.animation.proceed();
+            }
+            autoScrollAnimation = requestAnimationFrame(animate);
+        };
+        
+        // Start continuous animation
+        autoScrollAnimation = requestAnimationFrame(animate);
         
         const startAutoplay = () => { 
-            if (!autoplayTimer) {
-                autoplayTimer = setInterval(() => embla.scrollNext(), AUTOPLAY_INTERVAL);
-                progressBarInner.style.animationPlayState = 'running';
-            }
+            isHovered = false;
+            progressBarInner.style.animationPlayState = 'running';
         };
         
         const stopAutoplay = () => { 
-            if (autoplayTimer) { 
-                clearInterval(autoplayTimer); 
-                autoplayTimer = null;
-                progressBarInner.style.animationPlayState = 'paused';
-            }
+            isHovered = true;
+            progressBarInner.style.animationPlayState = 'paused';
         };
 
         emblaRoot.addEventListener('mouseenter', stopAutoplay);
         emblaRoot.addEventListener('mouseleave', startAutoplay);
         emblaRoot.addEventListener('focusin', stopAutoplay);
         emblaRoot.addEventListener('focusout', startAutoplay);
+
+        // Continuous progress bar animation (20 seconds for full cycle)
+        progressBarInner.style.animationDuration = '5s';
+        progressBarInner.style.animationPlayState = 'running';
 
         // Re-init on resize (debounced) to ensure loop clones and snap positions are correct
         let resizeTimer = null;
@@ -136,25 +176,17 @@ document.addEventListener('DOMContentLoaded', () => {
         // Ensure proper init after layout (in case fonts or rendering shifted sizes)
         setTimeout(() => { try { embla.reInit(); } catch (e) {} }, 200);
         
-        // Reset progress bar animation on slide change
-        embla.on('select', () => {
-            progressBarInner.style.animation = 'none';
-            setTimeout(() => {
-                progressBarInner.style.animation = null;
-            }, 10);
-        });
-        
-        // Navigation - Keyboard nav with autoscroll reset
+        // Navigation - Keyboard nav with autoscroll pause/resume
         window.addEventListener('keydown', (e) => {
             if (e.key === 'ArrowLeft') { 
                 stopAutoplay(); 
                 embla.scrollPrev(); 
-                setTimeout(startAutoplay, 100);
+                setTimeout(startAutoplay, 2000);
             }
             if (e.key === 'ArrowRight') { 
                 stopAutoplay(); 
                 embla.scrollNext(); 
-                setTimeout(startAutoplay, 100);
+                setTimeout(startAutoplay, 2000);
             }
         });
 
@@ -219,7 +251,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 fadeColor: 'rgba(239, 68, 68, 0.35)'
             },
             upcoming: {
-                text: 'Starting Soon | <span lang="ar" class="arabic">يبدأ قريباً</span>',
+                text: 'Starting&nbsp;Soon&nbsp;| <span lang="ar" class="arabic">يبدأ&nbsp;قريباً</span>',
                 icon: 'fa-clock',
                 pulseColor: 'bg-orange-400',
                 bodyBg: 'linear-gradient(135deg, #fb923c 0%, #f97316 15%, #ea580c 30%, #fb923c 45%, #c2410c 60%, #f97316 75%, #9a3412 90%, #fb923c 100%)',
@@ -311,12 +343,15 @@ document.addEventListener('DOMContentLoaded', () => {
         // Keep icon in sync with fullscreen state (handles ESC/F11 toggles)
         document.addEventListener('fullscreenchange', () => {
             const icon = fsBtn.querySelector('i');
+            const nextMeetingCard = document.getElementById('nextMeetingCard');
             if (document.fullscreenElement) {
                 icon.classList.remove('fa-expand');
                 icon.classList.add('fa-compress');
+                if (nextMeetingCard) nextMeetingCard.classList.add('fullscreen-mode');
             } else {
                 icon.classList.remove('fa-compress');
                 icon.classList.add('fa-expand');
+                if (nextMeetingCard) nextMeetingCard.classList.remove('fullscreen-mode');
             }
         });
     }

@@ -35,27 +35,9 @@
         <div
           class="flex flex-col md:flex-row px-4 md:px-8 justify-between items-start md:items-center"
         >
-          <!-- Left Section: Hall Info -->
-          <div class="text-right md:text-right">
-            <h1 class="text-xl md:text-2xl font-bold text-gray-800">
-              Sas Al Nakhl Meeting Room | <span lang="ar" class="arabic">قاعة ساس النخل</span>
-            </h1>
-            <div
-              class="flex items-center mt-0.5 text-sm md:text-base font-semibold"
-            >
-              <span class="text-gray-600">ADCDA Headquarters | <span lang="ar" class="arabic">المقر الرئيسي لهيئة الدفاع المدني</span></span>
-              <div class="flex items-center mr-3 rtl:ml-3">
-                <i
-                  class="fas fa-users text-gray-100 ml-8"
-                  aria-hidden="true"
-                ></i>
-                <span id="attendeeCount" class="text-gray-700 ml-1">24</span>
-              </div>
-            </div>
-          </div>
 
-          <!-- Right Section: Time & Date -->
-          <div class="text-right mt-2 md:mt-0">
+        <!-- left Section: Time & Date -->
+          <div class="text-left mt-2 md:mt-0">
             <div
               id="currentTime"
               class="text-xl md:text-4xl font-extrabold text-gray-800"
@@ -81,14 +63,38 @@
               6 Rajab 1447 AH
             </div>
           </div>
+
+          <!-- right Section: Hall Info -->
+          <div class="text-right md:text-right">
+            <h1 class="text-xl md:text-2xl font-bold text-gray-800">
+              Sas Al Nakhl Meeting Room | <span lang="ar" class="arabic">قاعة ساس النخل</span>
+            </h1>
+            <div
+              class="flex items-center mt-0.5 text-sm md:text-base font-semibold"
+            >
+              <span class="text-gray-600">ADCDA Headquarters | <span lang="ar" class="arabic">المقر الرئيسي لهيئة الدفاع المدني</span></span>
+              <div class="flex items-center mr-3 rtl:ml-3">
+                <i
+                  class="fas fa-users text-gray-100 ml-8"
+                  aria-hidden="true"
+                ></i>
+                <span id="attendeeCount" class="text-gray-700 ml-1">24</span>
+              </div>
+            </div>
+          </div>
+
+          
         </div>
       </header>
 
 
 
       <!-- Main Content -->
-      <main class="pt-20 pb-40 px-4 flex justify-center items-center">
-        <div class="w-full max-w-6xl mx-auto">
+      <main class="pt-20 pb-40 px-4 flex justify-center items-center relative">
+        <!-- Watermark Logo -->
+        <img src="logo.svg" alt="HBSCD Logo" class="watermark-logo" aria-hidden="true">
+        
+        <div class="w-full max-w-6xl mx-auto relative z-10">
           <div class="flex flex-col justify-center items-center gap-6">
 
             <!-- top Column -->
@@ -111,7 +117,7 @@
                   <!-- Status Text -->
                   <div
                     id="statusText"
-                    class="text-xl md:text-4xl font-bold text-gray-800 mb-0 mt-4"
+                    class=" text-2xl md:text-5xl font-extrabold text-gray-800 mb-0 mt-4"
                   >
                     Available | <span lang="ar" class="arabic">متـــــــاح</span>
                   </div>
@@ -122,6 +128,7 @@
             <!-- middle Column -->
            
             <div
+              id="nextMeetingCard"
               class="w-full md:w-[80%] bg-white/5 backdrop-blur-sm rounded-lg border border-2 border-dashed border-white/20 p-4 md:p-6 text-center"
             >
               <div class="text-base text-2xl font-semibold text-gray-800 mb-2">
