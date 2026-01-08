@@ -870,6 +870,91 @@ footer {
 /* Remove shadows from cards/components (explicit utility fallback) */
 .shadow-sm, .shadow-lg, .shadow { box-shadow: none !important; }
 
+/* Modern Meetings Table Styles */
+.meetings-table {
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+.meetings-table thead {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(5px);
+}
+
+.meetings-table th {
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.95);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 0.75rem 1rem;
+  white-space: nowrap;
+}
+
+.meetings-table tbody tr {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  transition: all 0.3s ease;
+}
+
+.meetings-table tbody tr:hover {
+  background: rgba(255, 255, 255, 0.08);
+  transform: translateX(2px);
+}
+
+.meetings-table tbody tr.current-meeting {
+  background: rgba(255, 255, 255, 0.15);
+  border-left: 3px solid rgba(255, 255, 255, 0.5);
+}
+
+.meetings-table td {
+  padding: 0.875rem 1rem;
+  font-size: 0.875rem;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.meetings-table .time-cell {
+  font-weight: 700;
+  color: #fbbf24;
+  white-space: nowrap;
+  min-width: 100px;
+}
+
+.meetings-table .meeting-cell {
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+.meetings-table .attendees-cell {
+  text-align: center;
+  font-weight: 600;
+  min-width: 60px;
+}
+
+/* Responsive table */
+@media (max-width: 639px) {
+  .meetings-table th,
+  .meetings-table td {
+    padding: 0.5rem 0.625rem;
+    font-size: 0.75rem;
+  }
+  
+  .meetings-table .time-cell {
+    min-width: 80px;
+  }
+  
+  .meetings-table .attendees-cell {
+    min-width: 50px;
+  }
+}
+
+@media (min-width: 640px) and (max-width: 1023px) {
+  .meetings-table th,
+  .meetings-table td {
+    padding: 0.625rem 0.75rem;
+    font-size: 0.8125rem;
+  }
+}
+
 /* Floating buttons container (right middle) */
 .floating-buttons {
   position: fixed;

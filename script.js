@@ -50,7 +50,7 @@ document.addEventListener('DOMContentLoaded', () => {
         return `${parts[0]} | <span lang="ar" class="arabic">${parts[1]}</span>`;
     }
 
-    // Meeting data for carousel
+    // Meeting data for table display
     const meetings = [
         { time: '09:00 - 10:30', title: 'Emergency Response Training | تدريب الاستجابة للطوارئ', attendees: 18 },
         { time: '11:00 - 12:00', title: 'Fire Safety Workshop | ورشة عمل السلامة من الحرائق', attendees: 24 },
@@ -64,165 +64,33 @@ document.addEventListener('DOMContentLoaded', () => {
         { time: '18:30 - 19:30', title: 'Volunteer Coordination | تنسيق المتطوعين', attendees: 30 }
     ];
     
-    // Generate carousel items (tripled for seamless continuous loop)
-    const carouselInner = document.getElementById('carouselInner');
-    const createMeetingItem = (meeting) => {
-        const meetingItem = document.createElement('div');
-        // Using embla__slide class from integrated embla folder structure
-        meetingItem.className = 'embla__slide carousel-item flex-shrink-0 bg-white/15 backdrop-blur-sm border border-white/20 rounded-xl text-center';
-        meetingItem.innerHTML = `
-            <div class="text-yellow-400 font-extrabold text-base">${meeting.time}</div>
-            <div class="mt-1 text-base font-medium">${formatBilingual(meeting.title)}</div>
-            <div class="mt-2 flex items-center justify-center text-sm">
-                <i class="fas fa-users mr-2 text-xs" aria-hidden="true"></i>
-                <span>${meeting.attendees} attendees</span>
-            </div>
-        `;
-        meetingItem.setAttribute('role', 'listitem');
-        meetingItem.setAttribute('aria-label', `${meeting.time} — ${meeting.title} — ${meeting.attendees} attendees`);
-        return meetingItem;
-    };
-    
-    // Create three copies of the carousel for seamless loop
-    for (let i = 0; i < 3; i++) {
+    // Generate table rows for meetings
+    const meetingsTableBody = document.getElementById('meetingsTableBody');
+    if (meetingsTableBody) {
         meetings.forEach(meeting => {
-            carouselInner.appendChild(createMeetingItem(meeting));
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td class="time-cell">${meeting.time}</td>
+                <td class="meeting-cell">${formatBilingual(meeting.title)}</td>
+                <td class="attendees-cell">${meeting.attendees}</td>
+            `;
+            meetingsTableBody.appendChild(row);
         });
-    }
-    
-    // Initialize Embla carousel (with continuous marquee autoscroll)
-    let embla;
-    const emblaViewport = document.querySelector('.embla__viewport');
-    const emblaRoot = document.querySelector('.embla');
-    
-    // Create progress bar for autoscroll
-    const progressBar = document.createElement('div');
-    progressBar.className = 'embla__progress';
-    progressBar.innerHTML = '<div class="embla__progress__bar"></div>';
-    emblaRoot.appendChild(progressBar);
-    const progressBarInner = progressBar.querySelector('.embla__progress__bar');
-    
-    if (typeof EmblaCarousel === 'function' && emblaViewport) {
-        embla = EmblaCarousel(emblaViewport, { 
-            containScroll: false,
-            align: 'start', 
-            loop: true, 
-            speed: 20,
-            dragFree: false,
-            inViewThreshold: 0
-        });
-
-        // Continuous marquee autoscroll (right to left)
-        let autoScrollAnimation = null;
-        let isHovered = false;
-        const SCROLL_SPEED = -1.5; // pixels per frame (negative for right-to-left)
-        const slides = embla.slideNodes();
-        const slideCount = slides.length / 3; // We have 3 copies
         
-        const animate = () => {
-            if (!isHovered && embla) {
-                const engine = embla.internalEngine();
-                let target = engine.location.get() + SCROLL_SPEED;
-                
-                // Seamless loop: reset when we scroll past the first set
-                const slideWidth = slides[0].offsetWidth + parseFloat(getComputedStyle(slides[0].parentElement).gap);
-                const resetPoint = -slideWidth * slideCount;
-                const maxPoint = slideWidth * slideCount;
-                
-                if (target < resetPoint) {
-                    target = target + (slideWidth * slideCount);
-                } else if (target > maxPoint) {
-                    target = target - (slideWidth * slideCount);
-                }
-                
-                engine.location.set(target);
-                engine.translate.to(engine.location);
-                engine.animation.proceed();
-            }
-            autoScrollAnimation = requestAnimationFrame(animate);
-        };
+        // Highlight current meeting based on time (optional feature)
+        const now = new Date();
+        const currentTime = now.getHours() * 60 + now.getMinutes();
         
-        // Start continuous animation
-        autoScrollAnimation = requestAnimationFrame(animate);
-        
-        const startAutoplay = () => { 
-            isHovered = false;
-            progressBarInner.style.animationPlayState = 'running';
-        };
-        
-        const stopAutoplay = () => { 
-            isHovered = true;
-            progressBarInner.style.animationPlayState = 'paused';
-        };
-
-        emblaRoot.addEventListener('mouseenter', stopAutoplay);
-        emblaRoot.addEventListener('mouseleave', startAutoplay);
-        emblaRoot.addEventListener('focusin', stopAutoplay);
-        emblaRoot.addEventListener('focusout', startAutoplay);
-
-        // Continuous progress bar animation (20 seconds for full cycle)
-        progressBarInner.style.animationDuration = '5s';
-        progressBarInner.style.animationPlayState = 'running';
-
-        // Re-init on resize (debounced) to ensure loop clones and snap positions are correct
-        let resizeTimer = null;
-        window.addEventListener('resize', () => {
-            if (resizeTimer) clearTimeout(resizeTimer);
-            resizeTimer = setTimeout(() => {
-                try { embla.reInit(); } catch (e) { /* ignore */ }
-            }, 150);
-        });
-
-        // Ensure proper init after layout (in case fonts or rendering shifted sizes)
-        setTimeout(() => { try { embla.reInit(); } catch (e) {} }, 200);
-        
-        // Navigation - Keyboard nav with autoscroll pause/resume
-        window.addEventListener('keydown', (e) => {
-            if (e.key === 'ArrowLeft') { 
-                stopAutoplay(); 
-                embla.scrollPrev(); 
-                setTimeout(startAutoplay, 2000);
-            }
-            if (e.key === 'ArrowRight') { 
-                stopAutoplay(); 
-                embla.scrollNext(); 
-                setTimeout(startAutoplay, 2000);
-            }
-        });
-
-        // Set active class on init and on select
-        const updateActive = () => {
-            try {
-                const slidesInView = embla.slidesInView();
-                document.querySelectorAll('.carousel-item').forEach((item, i) => {
-                    if (slidesInView.indexOf(i) !== -1) item.classList.add('active'); else item.classList.remove('active');
-                });
-            } catch (err) {
-                const selected = embla.selectedScrollSnap();
-                const slides = embla.slideNodes();
-                const visible = slides.length ? Math.max(1, Math.round(embla.containerNode().getBoundingClientRect().width / slides[0].getBoundingClientRect().width)) : 1;
-                document.querySelectorAll('.carousel-item').forEach((item, i) => {
-                    if (i >= selected && i < selected + visible) item.classList.add('active'); else item.classList.remove('active');
-                });
-            }
-        };
-        embla.on('select', updateActive);
-        embla.on('init', updateActive);
-    } else {
-        // Fallback: rotate slides by moving first child to the end (looping)
-        let fallbackTimer = setInterval(() => {
-            const container = document.getElementById('carouselInner');
-            if (!container || !container.firstElementChild) return;
-            container.appendChild(container.firstElementChild);
-        }, 3500);
-        window.addEventListener('keydown', (e) => {
-            const container = document.getElementById('carouselInner');
-            if (!container) return;
-            if (e.key === 'ArrowLeft') {
-                container.insertBefore(container.lastElementChild, container.firstElementChild);
-            }
-            if (e.key === 'ArrowRight') {
-                container.appendChild(container.firstElementChild);
+        const rows = meetingsTableBody.querySelectorAll('tr');
+        rows.forEach(row => {
+            const timeCell = row.querySelector('.time-cell').textContent;
+            const [startTime] = timeCell.split(' - ');
+            const [startHour, startMin] = startTime.split(':').map(Number);
+            const meetingStart = startHour * 60 + startMin;
+            
+            // Check if current time is within 30 minutes of this meeting
+            if (currentTime >= meetingStart - 30 && currentTime <= meetingStart + 90) {
+                row.classList.add('current-meeting');
             }
         });
     }
