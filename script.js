@@ -251,7 +251,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 fadeColor: 'rgba(239, 68, 68, 0.35)'
             },
             upcoming: {
-                text: 'Starting&nbsp;Soon&nbsp;| <span lang="ar" class="arabic">يبدأ&nbsp;قريباً</span>',
+                text: 'Starting&nbsp;Soon&nbsp;| <span lang="ar" class="arabic ">يبدأ&nbsp;قريباً</span>',
                 icon: 'fa-clock',
                 pulseColor: 'bg-orange-400',
                 bodyBg: 'linear-gradient(135deg, #fb923c 0%, #f97316 15%, #ea580c 30%, #fb923c 45%, #c2410c 60%, #f97316 75%, #9a3412 90%, #fb923c 100%)',
