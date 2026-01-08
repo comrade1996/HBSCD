@@ -93,6 +93,100 @@ document.addEventListener('DOMContentLoaded', () => {
                 row.classList.add('current-meeting');
             }
         });
+
+        // --- Continuous vertical carousel logic (shows 5 rows) ---
+        (function initMeetingsAutoScroll() {
+            const table = document.querySelector('.meetings-table');
+            const tbody = meetingsTableBody;
+            // Find the wrapper with class .meetings-scroll (we added it in HTML) - ensures correct overflow handling
+            const container = tbody.closest('.meetings-scroll');
+
+            if (!table || !tbody || !container) return;
+
+            // Ensure at least 8 rows exist (clone if necessary) to make smooth continuous scroll
+            const desiredVisible = 7;
+            const originalRows = Array.from(tbody.children);
+            while (tbody.children.length < Math.max(desiredVisible + 1, originalRows.length)) {
+                originalRows.forEach(r => tbody.appendChild(r.cloneNode(true)));
+            }
+
+            // Compute row height from first row
+            const firstRow = tbody.querySelector('tr');
+            const rowHeight = firstRow.getBoundingClientRect().height || 40;
+
+            // Set CSS variable to match computed row height so container can show exactly 7 rows
+            document.documentElement.style.setProperty('--meeting-row-height', `${rowHeight}px`);
+            container.classList.add('meetings-scroll', 'show-7-rows');
+
+            // Enable auto-scroll by default
+            container.classList.add('auto-scroll');
+            container.classList.remove('static');
+
+            // Auto scroll state
+            let offset = 0;
+            let lastTime = performance.now();
+            const SPEED_PX_PER_SEC = 25; // adjust scroll speed (px/s)
+            let running = true;
+            let pauseTimeout = null;
+            const PAUSE_AFTER_INTERACTION_MS = 3000;
+
+            // Helper to pause temporarily (e.g., when user scrolls or interacts)
+            function pauseTemporarily(ms = PAUSE_AFTER_INTERACTION_MS) {
+                running = false;
+                if (pauseTimeout) clearTimeout(pauseTimeout);
+                pauseTimeout = setTimeout(() => {
+                    running = true;
+                    lastTime = performance.now();
+                    requestAnimationFrame(step);
+                }, ms);
+            }
+
+            // Pause on hover/focus (keep immediate pause)
+            container.addEventListener('mouseenter', () => { running = false; });
+            container.addEventListener('mouseleave', () => { running = true; lastTime = performance.now(); requestAnimationFrame(step); });
+            container.addEventListener('focusin', () => { running = false; });
+            container.addEventListener('focusout', () => { running = true; lastTime = performance.now(); requestAnimationFrame(step); });
+
+            // Pause when user attempts interaction (wheel/touch/pointer) and resume after a short idle period
+            container.addEventListener('wheel', (e) => {
+                pauseTemporarily();
+            }, { passive: true });
+            container.addEventListener('touchstart', () => { pauseTemporarily(); }, { passive: true });
+            container.addEventListener('pointerdown', () => { pauseTemporarily(); });
+
+
+
+            // Ensure we have at least one full duplicate set to loop smoothly
+            function ensureLoopable() {
+                const rows = tbody.children.length;
+                if (rows < desiredVisible * 2) {
+                    const current = Array.from(tbody.children);
+                    current.forEach(r => tbody.appendChild(r.cloneNode(true)));
+                }
+            }
+            ensureLoopable();
+
+            function step(now) {
+                if (!running) { lastTime = now; return; }
+                const dt = (now - lastTime) / 1000; // seconds
+                lastTime = now;
+                offset += SPEED_PX_PER_SEC * dt;
+
+                if (offset >= rowHeight) {
+                    // Move first row to end and reduce offset
+                    const first = tbody.firstElementChild;
+                    if (first) tbody.appendChild(first);
+                    offset -= rowHeight;
+                }
+
+                // Apply transform
+                tbody.style.transform = `translateY(-${offset}px)`;
+                requestAnimationFrame(step);
+            }
+
+            // Kick off animation
+            requestAnimationFrame(step);
+        })();
     }
 
     // Set initial hall status to Available
@@ -108,7 +202,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 pulseColor: 'bg-green-600',
                 bodyBg: 'linear-gradient(135deg, #10b981 0%, #059669 15%, #047857 30%, #10b981 45%, #065f46 60%, #047857 75%, #064e3b 90%, #10b981 100%)',
                 textColor: '#ffffff',
-                fadeColor: 'rgba(16, 185, 129, 0.35)'
+                fadeColor: 'rgba(16, 185, 129, 0.35)',
+                headerBg: '#10b981'
             },
             engaged: {
                 text: 'Engaged | <span lang="ar" class="arabic">مشغول</span>',
@@ -116,7 +211,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 pulseColor: 'bg-red-500',
                 bodyBg: 'linear-gradient(135deg, #ef4444 0%, #dc2626 15%, #b91c1c 30%, #ef4444 45%, #991b1b 60%, #dc2626 75%, #7f1d1d 90%, #ef4444 100%)',
                 textColor: '#ffffff',
-                fadeColor: 'rgba(239, 68, 68, 0.35)'
+                fadeColor: 'rgba(239, 68, 68, 0.35)',
+                headerBg: '#ef4444'
             },
             upcoming: {
                 text: 'Starting&nbsp;Soon&nbsp;| <span lang="ar" class="arabic ">يبدأ&nbsp;قريباً</span>',
@@ -124,7 +220,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 pulseColor: 'bg-orange-400',
                 bodyBg: 'linear-gradient(135deg, #fb923c 0%, #f97316 15%, #ea580c 30%, #fb923c 45%, #c2410c 60%, #f97316 75%, #9a3412 90%, #fb923c 100%)',
                 textColor: '#ffffff',
-                fadeColor: 'rgba(251, 146, 60, 0.35)'
+                fadeColor: 'rgba(251, 146, 60, 0.35)',
+                headerBg: '#fb923c'
             }
         };
 
@@ -137,6 +234,10 @@ document.addEventListener('DOMContentLoaded', () => {
         document.body.style.background = s.bodyBg;
         document.body.style.backgroundSize = '400% 400%';
         document.body.style.color = s.textColor;
+
+        // Update status-aware table header colors (solid, non-transparent)
+        document.documentElement.style.setProperty('--status-header-bg', s.headerBg || '#10b981');
+        document.documentElement.style.setProperty('--status-header-color', s.textColor || '#ffffff');
 
         // Keep hall container transparent so body gradient shows through
         const hall = document.getElementById('hallStatus');

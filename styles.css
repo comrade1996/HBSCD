@@ -47,9 +47,9 @@ body {
 header.glass {
     /* background: linear-gradient(180deg, rgba(255,255,255,0.7), rgba(255,255,255,0.5));
     backdrop-filter: blur(10px); */
-    margin: 0.5rem 1rem;
-    border-radius: 0.75rem;
-    width: calc(100% - 2rem);
+    margin: 0;
+    border-radius: 0;
+    width: 100%;
 }
 
 /* Responsive header adjustments */
@@ -953,6 +953,71 @@ footer {
     padding: 0.625rem 0.75rem;
     font-size: 0.8125rem;
   }
+}
+
+/* Meetings vertical carousel container */
+.meetings-scroll {
+  position: relative;
+  /* default: static scroll inside the table - use class .auto to enable continuous autoplay */
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  min-height: 0; /* Important for flex-1 to work properly */
+}
+
+/* Add the .auto class to enable continuous automated scrolling (overflow hidden required) */
+.meetings-scroll.auto,
+.meetings-scroll.auto-scroll {
+  overflow: hidden;
+}
+
+/* Make tbody block so we can translate it independently while keeping the header fixed */
+.meetings-table thead,
+.meetings-table tbody {
+  display: block;
+}
+
+.meetings-table thead tr {
+  display: table;
+  width: 100%;
+  table-layout: fixed;
+}
+
+.meetings-table tbody tr {
+  display: table;
+  table-layout: fixed;
+  width: 100%;
+}
+
+/* Status-aware table header (non-transparent solid background matching current status) */
+.meetings-table thead th {
+  background-color: var(--status-header-bg);
+  color: var(--status-header-color);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Smooth transform for the scrolling body */
+.meetings-table tbody {
+  transform: translateY(0);
+  will-change: transform;
+}
+
+/* Default row height variable (can be overridden by JS) */
+:root { --meeting-row-height: 3.5rem; --status-header-bg: #10b981; --status-header-color: #ffffff; }
+
+/* Set container to show 7 rows by default */
+.meetings-scroll.show-7-rows {
+  max-height: calc(var(--meeting-row-height) * 7);
+  height: 100%; /* Fill available space but respect max-height */
+}
+
+@media (max-width: 639px) {
+  :root { --meeting-row-height: 2.8rem; }
+  .meetings-scroll.show-7-rows { max-height: calc(var(--meeting-row-height) * 7); }
+}
+
+@media (min-width: 640px) and (max-width: 1023px) {
+  :root { --meeting-row-height: 3.2rem; }
+  .meetings-scroll.show-7-rows { max-height: calc(var(--meeting-row-height) * 7); }
 }
 
 /* Floating buttons container (right middle) */
