@@ -140,11 +140,11 @@ body {
 
 /* Slightly stronger header transparency for glassmorphism */
 header.glass {
-    margin: var(--space-sm) var(--space-h-md);
+    margin: var(--space-xs) var(--space-h-md);
     border-radius: var(--radius-md);
     width: calc(100% - calc(var(--space-h-md) * 2));
     flex-shrink: 0;
-    padding: var(--space-md) var(--space-h-md);
+    padding: var(--space-sm) var(--space-h-md);
     border: 1px solid var(--border-highlight);
     box-shadow: var(--card-shadow);
     backdrop-filter: blur(8px);
@@ -167,7 +167,7 @@ header.glass {
 
 /* Landscape mode section gaps - use CSS variable */
 .flex.flex-col.justify-center.items-center {
-    gap: var(--space-lg) !important;
+    gap: var(--space-sm) !important;
 }
 
 /* Fullscreen mode enhancements */
@@ -216,7 +216,7 @@ main {
     justify-content: center;
     align-items: center;
     overflow: hidden;
-    padding: var(--space-lg) var(--space-h-md);
+    padding: var(--space-sm) var(--space-h-md);
     min-height: 0; /* Important for flex child */
 }
 
@@ -274,7 +274,7 @@ header h1 {
 
 /* Next meeting card - viewport scaling */
 #nextMeetingCard {
-    padding: var(--space-lg) var(--space-h-lg) !important;
+    padding: var(--space-sm) var(--space-h-md) !important;
     box-shadow: var(--card-shadow);
     border-color: var(--border-highlight) !important;
 }
@@ -334,16 +334,16 @@ header h1 {
 
 /* Status indicator container - viewport scaling */
 .status-pulse-container {
-    margin-bottom: var(--space-sm);
+    margin-bottom: var(--space-xs);
 }
 
 .flex.justify-center.mb-8 {
-    margin-bottom: var(--space-md) !important;
-    margin-top: var(--space-sm) !important;
+    margin-bottom: var(--space-xs) !important;
+    margin-top: 0 !important;
 }
 
 .w-full.rounded-xl {
-    padding: var(--space-lg) var(--space-h-md) !important;
+    padding: var(--space-sm) var(--space-h-sm) !important;
 }
 
 @keyframes pulse-ring {
@@ -397,10 +397,10 @@ footer {
     border-radius: var(--radius-lg) var(--radius-lg) 0 0; 
     border: 1px solid var(--border-highlight);
     z-index: 40;
-    padding: var(--space-sm) var(--space-h-md) var(--space-md);
+    padding: var(--space-xs) var(--space-h-md) var(--space-sm);
     flex-shrink: 0;
     max-height: var(--footer-max-height);
-    margin: 0 var(--space-h-sm) var(--space-md);
+    margin: 0 var(--space-h-sm) var(--space-xs);
     overflow: hidden;
     box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
     backdrop-filter: blur(8px);
