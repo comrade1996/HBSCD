@@ -26,12 +26,12 @@
     <!-- State Indicator - This will change based on hall status -->
     <div
       id="hallStatus"
-      class="min-h-screen"
+      class="h-full"
       role="main"
       aria-label="Hall status and schedule"
     >
       <!-- Transparent Header -->
-      <header class="glass bg-white/5 backdrop-blur-sm fixed py-3 md:py-4 px-2 md:px-4 z-50">
+      <header class="glass bg-white/5 backdrop-blur-sm relative z-50">
         <div
           class="flex flex-col md:flex-row px-2 md:px-6 lg:px-8 justify-between items-start md:items-center"
         >
@@ -90,7 +90,7 @@
 
 
       <!-- Main Content -->
-      <main class="pt-16 md:pt-20 pb-32 md:pb-36 lg:pb-40 px-2 md:px-4 flex justify-center items-center relative">
+      <main class="flex-1 flex justify-center items-center relative overflow-hidden">
         <!-- Watermark Logo -->
         <img src="logo.svg" alt="HBSCD Logo" class="watermark-logo" aria-hidden="true">
         
@@ -174,7 +174,7 @@
 
       <!-- Footer Carousel -->
       <footer
-        class="fixed bottom-0 left-0 right-0 bg-white/5 backdrop-blur-sm py-1 mx-2 md:mx-3 mb-1 md:mb-2 rounded-t-xl"
+        class="relative bg-white/5 backdrop-blur-sm"
       >
         <div class="px-2 md:px-3 lg:px-4 mx-auto">
           <h3 class="text-xs md:text-sm font-bold mb-1 md:mb-2 text-center">
