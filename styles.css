@@ -367,7 +367,7 @@ footer {
     padding: var(--space-sm) var(--space-h-md) var(--space-md);
     flex-shrink: 0;
     max-height: var(--footer-max-height);
-    margin: 0 var(--space-h-sm) var(--space-sm);
+    margin: 0 var(--space-h-sm) var(--space-md);
     overflow: hidden;
 }
 
@@ -389,9 +389,9 @@ footer h3 {
 /* Embla carousel base styles - viewport-based */
 .embla {
   margin: auto;
-  --slide-height: var(--slide-height);
-  --slide-spacing: var(--slide-spacing);
-  --slide-size: 100%;
+  --embla-slide-height: var(--slide-height);
+  --embla-slide-spacing: clamp(0.5rem, 1.2vw, 1.25rem);
+  --embla-slide-size: 100%;
   position: relative;
   padding: var(--space-sm);
   overflow: hidden;
@@ -446,14 +446,14 @@ footer h3 {
 .embla__container {
   display: flex;
   touch-action: pan-y pinch-zoom;
-  gap: var(--slide-spacing);
+  gap: var(--embla-slide-spacing);
   backface-visibility: hidden;
   will-change: transform;
 }
 
 .embla__slide {
   transform: translate3d(0, 0, 0);
-  flex: 0 0 var(--slide-size);
+  flex: 0 0 var(--embla-slide-size);
   min-width: 0;
   backface-visibility: hidden;
 }
@@ -477,47 +477,47 @@ footer h3 {
 /* Mobile phones - show 1 slide */
 @media (max-width: 639px) {
     .embla {
-        --slide-size: 90%;
+        --embla-slide-size: 85%;
     }
 }
 
 /* Tablets - show 2-3 slides */
 @media (min-width: 640px) and (max-width: 1023px) {
     .embla {
-        --slide-size: 45%;
+        --embla-slide-size: calc(50% - var(--embla-slide-spacing));
     }
 }
 
 /* Large tablets and small desktops - show 3 slides */
 @media (min-width: 1024px) and (max-width: 1279px) {
     .embla {
-        --slide-size: 32%;
+        --embla-slide-size: calc(33.333% - var(--embla-slide-spacing));
     }
 }
 
 /* Desktops - show 3-4 slides */
 @media (min-width: 1280px) {
     .embla {
-        --slide-size: calc(33.333% - var(--slide-spacing) * 2 / 3);
+        --embla-slide-size: calc(33.333% - var(--embla-slide-spacing));
     }
 }
 
 /* Landscape mode optimizations - viewport-based */
 @media (orientation: landscape) {
     .embla {
-        --slide-height: clamp(3.5rem, 10vh, 6rem);
+        --embla-slide-height: clamp(3.5rem, 10vh, 6rem);
     }
 }
 
 @media (max-width: 767px) and (orientation: landscape) {
     .embla {
-        --slide-size: 48%;
+        --embla-slide-size: calc(50% - var(--embla-slide-spacing));
     }
 }
 
 @media (min-width: 768px) and (orientation: landscape) {
     .embla {
-        --slide-size: 30%;
+        --embla-slide-size: calc(33.333% - var(--embla-slide-spacing));
     }
 }
 /* Embla autoscroll progress bar - viewport-based */
