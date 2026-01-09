@@ -48,14 +48,14 @@
     --radius-full: 9999px;
     
     /* --- Icon Sizes --- */
-    --icon-sm: clamp(0.5rem, 1.5vmin, 0.875rem);
-    --icon-md: clamp(0.75rem, 2vmin, 1.1rem);
-    --icon-lg: clamp(1rem, 3vmin, 2rem);
+    --icon-sm: clamp(0.75rem, 2vmin, 1.1rem);
+    --icon-md: clamp(1rem, 2.5vmin, 1.5rem);
+    --icon-lg: clamp(1.5rem, 4vmin, 2.5rem);
     
     /* --- Component Sizes --- */
-    --status-pulse-size: clamp(3.5rem, 10vmin, 6rem);
-    --btn-size: clamp(2rem, 5vmin, 3.25rem);
-    --amenity-icon-size: clamp(1.25rem, 3vmin, 2rem);
+    --status-pulse-size: clamp(4rem, 12vmin, 7rem);
+    --btn-size: clamp(2.5rem, 6vmin, 3.5rem);
+    --amenity-icon-size: clamp(1.5rem, 3.5vmin, 2.5rem);
     
     /* --- Footer/Carousel --- */
     --footer-max-height: clamp(5.5rem, 18vh, 10rem);
@@ -400,7 +400,7 @@ footer {
     padding: var(--space-xs) var(--space-h-md) var(--space-sm);
     flex-shrink: 0;
     max-height: var(--footer-max-height);
-    margin: 0 var(--space-h-sm) var(--space-xs);
+    margin: 0 var(--space-h-sm) var(--space-md);
     overflow: hidden;
     box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
     backdrop-filter: blur(8px);
