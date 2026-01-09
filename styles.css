@@ -66,9 +66,9 @@
     --progress-bar-width: clamp(120px, 20vw, 250px);
     
     /* --- Kiosk Clarity Enhancements --- */
-    --text-shadow-light: 0 1px 2px rgba(0, 0, 0, 0.1);
-    --text-shadow-medium: 0 1px 3px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.1);
-    --text-shadow-strong: 0 2px 4px rgba(0, 0, 0, 0.2), 0 1px 2px rgba(0, 0, 0, 0.15);
+    --text-shadow-light: 0 1px 3px rgba(0, 0, 0, 0.25), 0 1px 2px rgba(0, 0, 0, 0.15);
+    --text-shadow-medium: 0 1px 4px rgba(0, 0, 0, 0.3), 0 2px 3px rgba(0, 0, 0, 0.2);
+    --text-shadow-strong: 0 2px 6px rgba(0, 0, 0, 0.4), 0 1px 3px rgba(0, 0, 0, 0.3);
     --card-shadow: 0 2px 8px rgba(0, 0, 0, 0.08), 0 1px 3px rgba(0, 0, 0, 0.06);
     --glow-subtle: 0 0 20px rgba(255, 255, 255, 0.1);
     --border-highlight: rgba(255, 255, 255, 0.15);
@@ -501,11 +501,11 @@ footer h3 {
 /* Carousel item padding and spacing enhancement - viewport-based */
 .carousel-item { 
   padding: var(--space-xs) var(--space-h-sm); 
-  height: 98%;
-  max-height: 98%;
+  height: var(--carousel-min-height);
+  min-height: var(--carousel-min-height);
+  max-height: var(--carousel-min-height);
   user-select: none;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  min-height: var(--carousel-min-height);
   overflow: hidden;
 }
 
