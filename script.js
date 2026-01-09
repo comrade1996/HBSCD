@@ -232,31 +232,35 @@ document.addEventListener('DOMContentLoaded', () => {
     setStatus(currentStatus);
     
     // Hall status helper (applies full-page gradient + contrast + carousel fade colors)
+    // Enhanced colors for better vibrancy on older tablets with limited color gamut
     function setStatus(key) {
         const map = {
             available: {
                 text: 'Available | <span lang="ar" class="arabic">متـــــــاح</span>',
                 icon: 'fa-check',
-                pulseColor: 'bg-green-600',
-                bodyBg: 'linear-gradient(135deg, #10b981 0%, #059669 15%, #047857 30%, #10b981 45%, #065f46 60%, #047857 75%, #064e3b 90%, #10b981 100%)',
+                pulseColor: 'bg-green-500',
+                // More vibrant green gradient with higher saturation colors
+                bodyBg: 'linear-gradient(135deg, #22c55e 0%, #16a34a 15%, #15803d 30%, #22c55e 45%, #14532d 60%, #16a34a 75%, #166534 90%, #22c55e 100%)',
                 textColor: '#ffffff',
-                fadeColor: 'rgba(16, 185, 129, 0.35)'
+                fadeColor: 'rgba(34, 197, 94, 0.4)'
             },
             engaged: {
                 text: 'Engaged | <span lang="ar" class="arabic">مشغول</span>',
                 icon: 'fa-times',
                 pulseColor: 'bg-red-500',
-                bodyBg: 'linear-gradient(135deg, #ef4444 0%, #dc2626 15%, #b91c1c 30%, #ef4444 45%, #991b1b 60%, #dc2626 75%, #7f1d1d 90%, #ef4444 100%)',
+                // More vibrant red gradient with higher saturation
+                bodyBg: 'linear-gradient(135deg, #f43f5e 0%, #e11d48 15%, #be123c 30%, #f43f5e 45%, #9f1239 60%, #e11d48 75%, #881337 90%, #f43f5e 100%)',
                 textColor: '#ffffff',
-                fadeColor: 'rgba(239, 68, 68, 0.35)'
+                fadeColor: 'rgba(244, 63, 94, 0.4)'
             },
             upcoming: {
                 text: 'Starting&nbsp;Soon&nbsp;| <span lang="ar" class="arabic ">يبدأ&nbsp;قريباً</span>',
                 icon: 'fa-clock',
-                pulseColor: 'bg-orange-400',
-                bodyBg: 'linear-gradient(135deg, #fb923c 0%, #f97316 15%, #ea580c 30%, #fb923c 45%, #c2410c 60%, #f97316 75%, #9a3412 90%, #fb923c 100%)',
+                pulseColor: 'bg-amber-400',
+                // More vibrant orange/amber gradient
+                bodyBg: 'linear-gradient(135deg, #f59e0b 0%, #d97706 15%, #b45309 30%, #f59e0b 45%, #92400e 60%, #d97706 75%, #78350f 90%, #f59e0b 100%)',
                 textColor: '#ffffff',
-                fadeColor: 'rgba(251, 146, 60, 0.35)'
+                fadeColor: 'rgba(245, 158, 11, 0.4)'
             }
         };
 
