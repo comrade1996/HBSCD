@@ -58,10 +58,10 @@
     --amenity-icon-size: clamp(1.5rem, 3.5vmin, 2.5rem);
     
     /* --- Footer/Carousel --- */
-    --footer-max-height: clamp(6rem, 18vh, 10rem);
-    --slide-height: clamp(3rem, 8vh, 5rem);
+    --footer-max-height: clamp(7rem, 22vh, 14rem);
+    --slide-height: clamp(4rem, 12vh, 8rem);
     --slide-spacing: clamp(0.5rem, 1vw, 1rem);
-    --carousel-min-height: clamp(2.5rem, 6vh, 4rem);
+    --carousel-min-height: clamp(3.5rem, 10vh, 6rem);
     --progress-bar-height: clamp(0.2rem, 0.4vh, 0.3rem);
     --progress-bar-width: clamp(120px, 20vw, 250px);
     
