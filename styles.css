@@ -16,15 +16,15 @@
     --color-boost-contrast: 1.08;
     --color-boost-brightness: 1.02;
     
-    /* --- Font Sizes (viewport-scaled) --- */
-    --font-xs: clamp(0.5rem, 1.2vmin, 0.75rem);
-    --font-sm: clamp(0.55rem, 1.3vmin, 0.875rem);
-    --font-base: clamp(0.6rem, 1.5vmin, 1rem);
-    --font-md: clamp(0.65rem, 1.6vmin, 1.125rem);
-    --font-lg: clamp(0.75rem, 2vmin, 1.5rem);
-    --font-xl: clamp(0.8rem, 2.2vmin, 1.75rem);
-    --font-2xl: clamp(1rem, 2.5vmin, 2rem);
-    --font-3xl: clamp(1rem, 3.5vmin, 3.5rem);
+    /* --- Font Sizes (viewport-scaled) - optimized for tablets --- */
+    --font-xs: clamp(0.625rem, 1.5vmin, 0.875rem);
+    --font-sm: clamp(0.75rem, 1.8vmin, 1rem);
+    --font-base: clamp(0.8rem, 2vmin, 1.125rem);
+    --font-md: clamp(0.875rem, 2.2vmin, 1.25rem);
+    --font-lg: clamp(1rem, 2.5vmin, 1.75rem);
+    --font-xl: clamp(1.125rem, 2.8vmin, 2rem);
+    --font-2xl: clamp(1.25rem, 3.2vmin, 2.5rem);
+    --font-3xl: clamp(1.5rem, 4.5vmin, 4rem);
     
     /* --- Spacing (viewport-scaled) --- */
     --space-xs: clamp(0.125rem, 0.4vh, 0.25rem);
