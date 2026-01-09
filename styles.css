@@ -501,8 +501,8 @@ footer h3 {
 /* Carousel item padding and spacing enhancement - viewport-based */
 .carousel-item { 
   padding: var(--space-xs) var(--space-h-sm); 
-  height: auto;
-  max-height: 100%;
+  height: 98%;
+  max-height: 98%;
   user-select: none;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   min-height: var(--carousel-min-height);
