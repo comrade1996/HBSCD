@@ -58,10 +58,10 @@
     --amenity-icon-size: clamp(1.5rem, 3.5vmin, 2.5rem);
     
     /* --- Footer/Carousel --- */
-    --footer-max-height: clamp(5.5rem, 18vh, 10rem);
-    --slide-height: clamp(4rem, 12vh, 8rem);
+    --footer-max-height: clamp(6rem, 20vh, 12rem);
+    --slide-height: clamp(3.5rem, 10vh, 6rem);
     --slide-spacing: clamp(0.5rem, 1vw, 1rem);
-    --carousel-min-height: clamp(4rem, 10vh, 7rem);
+    --carousel-min-height: clamp(3rem, 8vh, 5rem);
     --progress-bar-height: clamp(0.2rem, 0.4vh, 0.3rem);
     --progress-bar-width: clamp(120px, 20vw, 250px);
     
@@ -432,8 +432,9 @@ footer h3 {
   --embla-slide-spacing: clamp(0.5rem, 1.2vw, 1.25rem);
   --embla-slide-size: 100%;
   position: relative;
-  padding: var(--space-sm);
+  padding: var(--space-xs);
   overflow: hidden;
+  max-height: calc(var(--footer-max-height) - var(--space-lg));
 }
 
 .embla__viewport {
@@ -499,11 +500,13 @@ footer h3 {
 
 /* Carousel item padding and spacing enhancement - viewport-based */
 .carousel-item { 
-  padding: var(--space-md) var(--space-h-md); 
-  height: 100%;
+  padding: var(--space-xs) var(--space-h-sm); 
+  height: auto;
+  max-height: 100%;
   user-select: none;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   min-height: var(--carousel-min-height);
+  overflow: hidden;
 }
 
 .carousel-item:hover {
