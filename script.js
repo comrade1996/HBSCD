@@ -239,28 +239,28 @@ document.addEventListener('DOMContentLoaded', () => {
                 text: 'Available | <span lang="ar" class="arabic">متـــــــاح</span>',
                 icon: 'fa-check',
                 pulseColor: 'bg-green-500',
-                // More vibrant green gradient with higher saturation colors
-                bodyBg: 'linear-gradient(135deg, #22c55e 0%, #16a34a 15%, #15803d 30%, #22c55e 45%, #14532d 60%, #16a34a 75%, #166534 90%, #22c55e 100%)',
+                // Rich vibrant green gradient - more saturated emerald/forest tones
+                bodyBg: 'linear-gradient(135deg, #00c853 0%, #00a344 15%, #009639 30%, #00c853 45%, #007a2f 60%, #00a344 75%, #008c3a 90%, #00c853 100%)',
                 textColor: '#ffffff',
-                fadeColor: 'rgba(34, 197, 94, 0.4)'
+                fadeColor: 'rgba(0, 200, 83, 0.45)'
             },
             engaged: {
                 text: 'Engaged | <span lang="ar" class="arabic">مشغول</span>',
                 icon: 'fa-times',
                 pulseColor: 'bg-red-500',
-                // More vibrant red gradient with higher saturation
-                bodyBg: 'linear-gradient(135deg, #f43f5e 0%, #e11d48 15%, #be123c 30%, #f43f5e 45%, #9f1239 60%, #e11d48 75%, #881337 90%, #f43f5e 100%)',
+                // Rich vibrant red gradient - pure saturated reds
+                bodyBg: 'linear-gradient(135deg, #ff1744 0%, #d50000 15%, #c62828 30%, #ff1744 45%, #b71c1c 60%, #d50000 75%, #c62828 90%, #ff1744 100%)',
                 textColor: '#ffffff',
-                fadeColor: 'rgba(244, 63, 94, 0.4)'
+                fadeColor: 'rgba(255, 23, 68, 0.45)'
             },
             upcoming: {
                 text: 'Starting&nbsp;Soon&nbsp;| <span lang="ar" class="arabic ">يبدأ&nbsp;قريباً</span>',
                 icon: 'fa-clock',
-                pulseColor: 'bg-amber-400',
-                // More vibrant orange/amber gradient
-                bodyBg: 'linear-gradient(135deg, #f59e0b 0%, #d97706 15%, #b45309 30%, #f59e0b 45%, #92400e 60%, #d97706 75%, #78350f 90%, #f59e0b 100%)',
+                pulseColor: 'bg-amber-500',
+                // Rich vibrant amber/orange gradient - warm saturated tones
+                bodyBg: 'linear-gradient(135deg, #ff9100 0%, #ff6d00 15%, #e65100 30%, #ff9100 45%, #bf360c 60%, #ff6d00 75%, #e65100 90%, #ff9100 100%)',
                 textColor: '#ffffff',
-                fadeColor: 'rgba(245, 158, 11, 0.4)'
+                fadeColor: 'rgba(255, 145, 0, 0.45)'
             }
         };
 

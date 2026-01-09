@@ -64,6 +64,14 @@
     --carousel-min-height: clamp(4rem, 10vh, 7rem);
     --progress-bar-height: clamp(0.2rem, 0.4vh, 0.3rem);
     --progress-bar-width: clamp(120px, 20vw, 250px);
+    
+    /* --- Kiosk Clarity Enhancements --- */
+    --text-shadow-light: 0 1px 2px rgba(0, 0, 0, 0.1);
+    --text-shadow-medium: 0 1px 3px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.1);
+    --text-shadow-strong: 0 2px 4px rgba(0, 0, 0, 0.2), 0 1px 2px rgba(0, 0, 0, 0.15);
+    --card-shadow: 0 2px 8px rgba(0, 0, 0, 0.08), 0 1px 3px rgba(0, 0, 0, 0.06);
+    --glow-subtle: 0 0 20px rgba(255, 255, 255, 0.1);
+    --border-highlight: rgba(255, 255, 255, 0.15);
 }
 
 html {
@@ -132,13 +140,14 @@ body {
 
 /* Slightly stronger header transparency for glassmorphism */
 header.glass {
-    /* background: linear-gradient(180deg, rgba(255,255,255,0.7), rgba(255,255,255,0.5));
-    backdrop-filter: blur(10px); */
     margin: var(--space-sm) var(--space-h-md);
     border-radius: var(--radius-md);
     width: calc(100% - calc(var(--space-h-md) * 2));
     flex-shrink: 0;
     padding: var(--space-md) var(--space-h-md);
+    border: 1px solid var(--border-highlight);
+    box-shadow: var(--card-shadow);
+    backdrop-filter: blur(8px);
 }
 
 /* Watermark Logo - viewport-based */
@@ -195,6 +204,8 @@ header.glass {
     /* Use clamp so it scales smoothly based on viewport */
     font-size: var(--font-3xl) !important; 
     line-height: 1.05 !important;
+    text-shadow: var(--text-shadow-strong);
+    letter-spacing: 0.02em;
 }
 
 /* Main content - flex to fill remaining space */
@@ -214,21 +225,26 @@ header .text-xl,
 header .text-3xl,
 header .text-4xl {
     font-size: var(--font-2xl) !important;
+    text-shadow: var(--text-shadow-light);
 }
 
 header .text-xs,
 header .text-sm {
     font-size: var(--font-sm) !important;
+    text-shadow: var(--text-shadow-light);
 }
 
 header .text-base,
 header .text-lg,
 header .text-2xl {
     font-size: var(--font-lg) !important;
+    text-shadow: var(--text-shadow-light);
 }
 
 header h1 {
     font-size: var(--font-lg) !important;
+    text-shadow: var(--text-shadow-medium);
+    letter-spacing: 0.01em;
 }
 
 /* Landscape mode adjustments - all viewport-based */
@@ -259,20 +275,25 @@ header h1 {
 /* Next meeting card - viewport scaling */
 #nextMeetingCard {
     padding: var(--space-lg) var(--space-h-lg) !important;
+    box-shadow: var(--card-shadow);
+    border-color: var(--border-highlight) !important;
 }
 
 #nextMeetingCard .text-lg,
 #nextMeetingCard .text-xl,
 #nextMeetingCard .text-2xl {
     font-size: var(--font-lg) !important;
+    text-shadow: var(--text-shadow-medium);
 }
 
 #nextMeetingCard .text-base {
     font-size: var(--font-md) !important;
+    text-shadow: var(--text-shadow-light);
 }
 
 #nextMeetingCard .text-sm {
     font-size: var(--font-sm) !important;
+    text-shadow: var(--text-shadow-light);
 }
 /* Pulsating rings animation for status indicator */
 .status-pulse-container {
@@ -303,10 +324,12 @@ header h1 {
 #statusPulse {
     width: var(--status-pulse-size) !important;
     height: var(--status-pulse-size) !important;
+    box-shadow: var(--glow-subtle), var(--card-shadow);
 }
 
 #statusPulse i {
     font-size: var(--icon-lg) !important;
+    filter: drop-shadow(0 1px 2px rgba(0,0,0,0.2));
 }
 
 /* Status indicator container - viewport scaling */
@@ -362,28 +385,34 @@ header h1 {
 footer { 
     background: var(--glass-bg-medium); 
     border-radius: var(--radius-lg) var(--radius-lg) 0 0; 
-    border: 1px solid var(--glass-border);
+    border: 1px solid var(--border-highlight);
     z-index: 40;
     padding: var(--space-sm) var(--space-h-md) var(--space-md);
     flex-shrink: 0;
     max-height: var(--footer-max-height);
     margin: 0 var(--space-h-sm) var(--space-md);
     overflow: hidden;
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
+    backdrop-filter: blur(8px);
 }
 
 footer h3 {
     font-size: var(--font-sm) !important;
     margin-bottom: var(--space-xs) !important;
+    text-shadow: var(--text-shadow-light);
+    letter-spacing: 0.01em;
 }
 
 /* Subtle border for carousel items */
 .carousel-item { 
     border-radius: var(--radius-sm); 
-    border: 1px solid var(--glass-border); 
+    border: 1px solid var(--border-highlight); 
     display: flex; 
     flex-direction: column; 
     justify-content: center; 
-    align-items: center; 
+    align-items: center;
+    box-shadow: var(--card-shadow);
+    backdrop-filter: blur(4px);
 }
 
 /* Embla carousel base styles - viewport-based */
@@ -558,16 +587,19 @@ footer h3 {
     font-size: var(--font-base);
     font-weight: 800;
     line-height: 1.3;
+    text-shadow: var(--text-shadow-medium);
 }
 
 .carousel-item .mt-1 {
     font-size: var(--font-base);
     line-height: 1.3;
+    text-shadow: var(--text-shadow-light);
 }
 
 .carousel-item .mt-2 {
     font-size: var(--font-sm);
     line-height: 1.3;
+    text-shadow: var(--text-shadow-light);
 }
 
 /* Remove shadows from cards/components (explicit utility fallback) */
